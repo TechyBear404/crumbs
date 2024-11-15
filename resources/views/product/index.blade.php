@@ -6,14 +6,14 @@
             </h2>
             <a href="{{ route('products.create') }}" class="text-blue-500 text-xl">+</a>
             <button id="toggleViewButton" class="ml-auto bg-blue-500 text-white px-4 py-2" onclick="toggleView()">Switch to
-                Card View</button>
+                Table View</button>
         </div>
     </x-slot>
 
     <div class="container mx-auto py-8">
         <h1 class="text-2xl font-bold mb-6">Liste des Produits</h1>
 
-        <div id="tableView" class="block">
+        <div id="tableView" class="hidden">
             <table class="min-w-full bg-white">
                 <thead>
                     <tr>
@@ -57,7 +57,7 @@
             </table>
         </div>
 
-        <div id="cardView" class="hidden">
+        <div id="cardView" class="block">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 @foreach ($products as $product)
                     <div class="bg-white shadow-md rounded-lg overflow-hidden p-6 cursor-pointer hover:bg-gray-100"
