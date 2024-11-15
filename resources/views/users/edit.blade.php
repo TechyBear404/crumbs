@@ -2,7 +2,8 @@
     <div class="container mx-auto py-8">
         <h1 class="text-2xl font-bold mb-6">Modifier l'Utilisateur</h1>
 
-        <form action="{{ route('users.update', $user->id) }}" method="POST">
+        <form action="{{ route('users.update', $user->id) }}" method="POST"
+            class="bg-white rounded overflow-hidden p-4 border border-gray-200">
             @csrf
             @method('PUT')
             <div class="mb-4">
@@ -16,7 +17,7 @@
                 <x-input-error :messages="$errors->get('email')" />
             </div>
             <div class="mb-4">
-                <x-input-label name="password" value="Mot de passe" />
+                <x-input-label name="password" value="Nouveau mot de passe" />
                 <x-text-input type="password" name="password" />
                 <x-input-error :messages="$errors->get('password')" />
             </div>
@@ -35,10 +36,12 @@
                 <x-input-select name="status" :options="['active' => 'Actif', 'inactive' => 'Inactif']" :selected="$user->status" />
                 <x-input-error :messages="$errors->get('status')" />
             </div>
-            <button type="submit" class="bg-blue-500 text-white px-4 py-2">Mettre à jour</button>
-            <button type="button" class="bg-red-500 text-white px-4 py-2">
-                <a href="{{ url()->previous() }}">Annuler</a>
-            </button>
+            <div class="flex gap-4">
+                <button type="submit" class="bg-blue-500 text-white px-4 py-2">Mettre à jour</button>
+                <button type="button" class="bg-red-500 text-white px-4 py-2">
+                    <a href="{{ url()->previous() }}">Annuler</a>
+                </button>
+            </div>
         </form>
     </div>
 </x-app-layout>

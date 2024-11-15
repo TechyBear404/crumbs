@@ -1,8 +1,9 @@
 <x-app-layout>
-    <div class="container mx-auto py-8 m-4">
+    <div class="container mx-auto py-8">
         <h1 class="text-2xl font-bold mb-6">Modifier le produit</h1>
 
-        <form action="{{ route('products.update', $product->id) }}" method="POST">
+        <form action="{{ route('products.update', $product->id) }}" method="POST"
+            class="bg-white rounded overflow-hidden p-4 border border-gray-200">
             @csrf
             @method('PUT')
             <div class="mb-4">
@@ -46,10 +47,12 @@
                 </div>
                 <x-input-error :messages="$errors->get('ingredientsList')" />
             </div>
-            <button type="submit" class="bg-blue-500 text-white px-4 py-2">Mettre à jour</button>
-            <button type="button" class="bg-red-500 text-white px-4 py-2">
-                <a href="{{ url()->previous() }}">Annuler</a>
-            </button>
+            <div class="flex gap-4 pt-4">
+                <button type="submit" class="bg-blue-500 text-white px-4 py-2">Mettre à jour</button>
+                <button type="button" class="bg-red-500 text-white px-4 py-2">
+                    <a href="{{ url()->previous() }}">Annuler</a>
+                </button>
+            </div>
         </form>
     </div>
     <script>

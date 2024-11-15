@@ -2,7 +2,8 @@
     <div class="container mx-auto py-8 m-4">
         <h1 class="text-2xl font-bold mb-6">Créer un nouveau produit</h1>
 
-        <form action="{{ route('products.store') }}" method="POST">
+        <form action="{{ route('products.store') }}" method="POST"
+            class="bg-white rounded overflow-hidden p-4 border border-gray-200">
             @csrf
             <div class="mb-4">
                 <x-input-label name="name" value="Nom" />
@@ -51,10 +52,12 @@
                 </div>
                 <x-input-error :messages="$errors->get('ingredientsList')" />
             </div>
-            <button type="submit" class="bg-blue-500 text-white px-4 py-2">Créer</button>
-            <button type="button" class="bg-red-500 text-white px-4 py-2">
-                <a href="{{ url()->previous() }}">Annuler</a>
-            </button>
+            <div class="flex gap-4">
+                <button type="submit" class="bg-blue-500 text-white px-4 py-2">Créer</button>
+                <button type="button" class="bg-red-500 text-white px-4 py-2">
+                    <a href="{{ url()->previous() }}">Annuler</a>
+                </button>
+            </div>
         </form>
     </div>
     <script>
@@ -63,7 +66,6 @@
             const selectedIngredientId = ingredientSelect.value;
             const selectedIngredient = ingredientSelect.options[ingredientSelect.selectedIndex];
 
-            // Vérifier si l'ingrédient est déjà dans la liste
             if (document.querySelector(`input[name="ingredientsList[]"][value="${selectedIngredientId}"]`)) {
                 return;
             }
@@ -80,9 +82,7 @@
         }
 
         function removeIngredient(ingredientId) {
-            // Trouver l'élément correspondant à l'ingrédient à supprimer
             const ingredientElement = document.querySelector(`input[name="ingredientsList[]"][value="${ingredientId}"]`);
-            // Supprimer l'élément du DOM
             ingredientElement.parentNode.remove();
         }
     </script>

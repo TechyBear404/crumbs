@@ -21,7 +21,7 @@ class UserPolicy
     // public function view(User $user, User $model): bool
     public function view(User $user): bool
     {
-        return $user->role === 'admin' || $user->role === 'manager';
+        return $user->status === 'active' && ($user->role === 'admin' || $user->role === 'manager');
     }
 
     /**
@@ -29,7 +29,7 @@ class UserPolicy
      */
     public function create(User $user): bool
     {
-        return $user->role === 'admin' || $user->role === 'manager';
+        return $user->status === 'active' && ($user->role === 'admin' || $user->role === 'manager');
     }
 
     /**
@@ -38,7 +38,7 @@ class UserPolicy
     // public function update(User $user, User $model): bool
     public function update(User $user): bool
     {
-        return $user->role === 'admin' || $user->role === 'manager';
+        return $user->status === 'active' && ($user->role === 'admin' || $user->role === 'manager');
     }
 
     /**
@@ -47,7 +47,7 @@ class UserPolicy
     public function delete(User $user): bool
     // public function delete(User $user, User $model): bool
     {
-        return $user->role === 'admin' || $user->role === 'manager';
+        return $user->status === 'active' && ($user->role === 'admin' || $user->role === 'manager');
     }
 
     /**

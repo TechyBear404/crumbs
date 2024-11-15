@@ -16,6 +16,8 @@ class ProductController extends Controller
      */
     public function index()
     {
+        Gate::authorize('view', Product::class);
+
         $products = Product::all();
         // dd($products);
         return view('product.index', ['products' => $products]);
@@ -26,6 +28,8 @@ class ProductController extends Controller
      */
     public function create()
     {
+        Gate::authorize('create', Product::class);
+
         $categories = Category::orderBy('name')->get();
         $ingredients = Ingredient::orderBy('name')->get();
         return view('product.create', ['categories' => $categories, 'ingredients' => $ingredients]);
@@ -36,15 +40,14 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        // dd($request->all());
+        Gate::authorize('create', Product::class);
+
         $validatedData = $request->validate([
             'name' => 'required|string|max:255|unique:App\Models\Product,name',
             'description' => 'nullable | string | max:255',
             'catid' => 'required | integer',
             'ingredientsList' => 'required | array',
         ]);
-
-        // dd($validatedData);
 
 
         $product = Product::create([
@@ -53,18 +56,13 @@ class ProductController extends Controller
             'catid' => $validatedData['catid'],
         ]);
 
-
-        $ingredients = [];
         foreach ($validatedData['ingredientsList'] as $ingrId) {
-            // $ingredients[] = ['ingrId' => intval(), 'prodId' => $product->id];
             ProductIngredient::create([
                 'ingrId' => $ingrId,
                 'prodId' => $product->id,
             ]);
         }
-        // dd($ingredients);
 
-        // ProductIngredient::insertMany($ingredients);
         return redirect()->route('products.index')->with('success', 'Product created successfully');
     }
 
@@ -73,6 +71,8 @@ class ProductController extends Controller
      */
     public function show(string $id)
     {
+        Gate::authorize('view', Product::class);
+
         $product = Product::findOrFail($id);
         return view('product.show', ['product' => $product]);
     }

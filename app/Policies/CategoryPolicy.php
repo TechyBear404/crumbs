@@ -29,7 +29,7 @@ class CategoryPolicy
      */
     public function create(User $user): bool
     {
-        return $user->role === 'admin' || $user->role === 'manager';
+        return $user->status === 'active' && ($user->role === 'admin' || $user->role === 'manager');
     }
 
     /**
@@ -37,7 +37,7 @@ class CategoryPolicy
      */
     public function update(User $user, Category $category): bool
     {
-        return $user->role === 'admin' || $user->role === 'manager';
+        return $user->status === 'active' && ($user->role === 'admin' || $user->role === 'manager');
     }
 
     /**
@@ -45,7 +45,7 @@ class CategoryPolicy
      */
     public function delete(User $user, Category $category): bool
     {
-        return $user->role === 'admin' || $user->role === 'manager';
+        return $user->status === 'active' && ($user->role === 'admin' || $user->role === 'manager');
     }
 
     /**

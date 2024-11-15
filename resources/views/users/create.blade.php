@@ -2,7 +2,8 @@
     <div class="container mx-auto py-8">
         <h1 class="text-2xl font-bold mb-6">Créer un Nouvel Utilisateur</h1>
 
-        <form action="{{ route('users.store') }}" method="POST">
+        <form action="{{ route('users.store') }}" method="POST"
+            class="bg-white rounded overflow-hidden p-4 border border-gray-200">
             @csrf
             <div class="mb-4">
                 <x-input-label name="name" value="Nom" />
@@ -34,7 +35,12 @@
                 <x-input-select name="status" :options="['active' => 'Actif', 'inactive' => 'Inactif']" />
                 <x-input-error :messages="$errors->get('status')" />
             </div>
-            <button type="submit" class="bg-blue-500 text-white px-4 py-2">Créer</button>
+            <div class="flex gap-4">
+                <button type="submit" class="bg-blue-500 text-white px-4 py-2">Créer</button>
+                <button type="button" class="bg-red-500 text-white px-4 py-2">
+                    <a href="{{ url()->previous() }}">Annuler</a>
+                </button>
+            </div>
         </form>
     </div>
 </x-app-layout>
