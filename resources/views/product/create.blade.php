@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="container mx-auto py-8 m-4">
+    <div class="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <h1 class="text-2xl font-bold mb-6">Créer un nouveau produit</h1>
 
         <form action="{{ route('products.store') }}" method="POST"
@@ -26,12 +26,12 @@
             </div>
             <div class="mb-4">
                 <div class="flex gap-2 items-center mb-2">
-                    <x-input-label name="status" value="Statut" />
+                    <x-input-label name="ingredients" value="Ingredients" />
                     <a href="{{ route('ingredients.create', ['redirect_url' => route('products.create')]) }}"
                         class="text-blue-500 ">+</a>
                 </div>
                 <div class="flex gap-2 items-center mb-2">
-                    <x-input-select-dynamic id="ingredientSelect" name="status" :options="$ingredients" />
+                    <x-input-select-dynamic id="ingredientSelect" name="ingredients" :options="$ingredients" />
                     <button type="button" class="bg-blue-500 text-white px-4 py-2" onclick="addIngredient()">+</button>
                 </div>
                 <div id="ingredientList" class="flex flex-wrap gap-2">
@@ -51,6 +51,11 @@
                     @endif
                 </div>
                 <x-input-error :messages="$errors->get('ingredientsList')" />
+            </div>
+            <div class="mb-4">
+                <x-input-label name="status" value="Status" />
+                <x-input-select name="status" :options="['available' => 'Disponible', 'unavailable' => 'Indisponible']" />
+                <x-input-error :messages="$errors->get('status')" />
             </div>
             <div class="flex gap-4">
                 <button type="submit" class="bg-blue-500 text-white px-4 py-2">Créer</button>

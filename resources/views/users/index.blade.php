@@ -1,8 +1,10 @@
 <x-app-layout>
-    <div class="container mx-auto py-8">
+    <div class="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div class="flex gap-2 items-center mb-6">
             <h1 class="text-2xl font-bold mb">Liste des Utilisateurs</h1>
-            <a href="{{ route('users.create') }}" class="text-blue-500 text-xl">+</a>
+            @if (Auth::user()->role == 'admin' || Auth::user()->role == 'manager')
+                <a href="{{ route('users.create') }}" class="text-blue-500 text-xl">+</a>
+            @endif
         </div>
 
         <table class="min-w-full bg-white border border-gray-200">
