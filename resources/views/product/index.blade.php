@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="flex gap-2 items-center">
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Products') }}
+                Liste des Produits
             </h2>
             @if (Auth::user()->role == 'admin' || Auth::user()->role == 'manager')
                 <a href="{{ route('products.create') }}" class="text-blue-500 text-xl"><x-fas-plus class="w-5 h-5" /></a>
@@ -13,7 +13,7 @@
     </x-slot>
 
     <div class="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 class="text-2xl font-bold mb-6">Liste des Produits</h1>
+        {{-- <h1 class="text-2xl font-bold mb-6">Liste des Produits</h1> --}}
 
         <div class="flex gap-4 h-full">
             <div class="min-w-60 h-full bg-white shadow-md rounded-lg overflow-hidden p-6">

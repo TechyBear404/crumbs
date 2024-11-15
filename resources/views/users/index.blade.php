@@ -1,12 +1,16 @@
 <x-app-layout>
     <div class="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div class="flex gap-4 items-center mb-6">
-            <h1 class="text-2xl font-bold mb">Liste des Utilisateurs</h1>
-            @if (Auth::user()->role == 'admin' || Auth::user()->role == 'manager')
-                <a href="{{ route('users.create') }}" class="text-blue-500 text-xl"><x-fas-user-plus class="w-5 h-5"
-                        title="Ajouter un utilisateur" /></a>
-            @endif
-        </div>
+        <x-slot name="header">
+            <div class="flex gap-2 items-center">
+                <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                    Liste des Utilisateurs
+                </h2>
+                @if (Auth::user()->role == 'admin' || Auth::user()->role == 'manager')
+                    <a href="{{ route('users.create') }}" class="text-blue-500 text-xl"><x-fas-user-plus
+                            class="w-5 h-5" /></a>
+                @endif
+            </div>
+        </x-slot>
 
         <table class="min-w-full bg-white border border-gray-200">
             <thead>
