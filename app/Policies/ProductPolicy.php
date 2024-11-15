@@ -19,17 +19,17 @@ class ProductPolicy
     /**
      * Determine whether the user can view the model.
      */
-    // public function view(User $user, Product $product): bool
-    // {
-    //     //
-    // }
+    public function view(User $user): bool
+    {
+        return $user->status === 'active';
+    }
 
     /**
      * Determine whether the user can create models.
      */
     public function create(User $user): bool
     {
-        return $user->role === 'admin' || $user->role === 'manager';
+        return $user->status === 'active' && ($user->role === 'admin' || $user->role === 'manager');
     }
 
     /**
@@ -37,7 +37,7 @@ class ProductPolicy
      */
     public function update(User $user): bool
     {
-        return $user->role === 'admin' || $user->role === 'manager';
+        return $user->status === 'active' && ($user->role === 'admin' || $user->role === 'manager');
     }
 
     /**
@@ -45,7 +45,7 @@ class ProductPolicy
      */
     public function delete(User $user): bool
     {
-        return $user->role === 'admin' || $user->role === 'manager';
+        return $user->status === 'active' && ($user->role === 'admin' || $user->role === 'manager');
     }
 
     /**

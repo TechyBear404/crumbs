@@ -16,6 +16,8 @@ class ProductController extends Controller
      */
     public function index()
     {
+        Gate::authorize('view', Product::class);
+
         $products = Product::all();
         // dd($products);
         return view('product.index', ['products' => $products]);
@@ -26,6 +28,8 @@ class ProductController extends Controller
      */
     public function create()
     {
+        Gate::authorize('create', Product::class);
+
         $categories = Category::orderBy('name')->get();
         $ingredients = Ingredient::orderBy('name')->get();
         return view('product.create', ['categories' => $categories, 'ingredients' => $ingredients]);
@@ -36,35 +40,31 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        // dd($request->all());
+        Gate::authorize('create', Product::class);
+
         $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|max:255|unique:App\Models\Product,name',
             'description' => 'nullable | string | max:255',
             'catid' => 'required | integer',
             'ingredientsList' => 'required | array',
+            'status' => 'required|in:available,unavailable',
         ]);
-
-        // dd($validatedData);
 
 
         $product = Product::create([
             'name' => $validatedData['name'],
             'description' => $validatedData['description'],
             'catid' => $validatedData['catid'],
+            'status' => $validatedData['status'],
         ]);
 
-
-        $ingredients = [];
         foreach ($validatedData['ingredientsList'] as $ingrId) {
-            // $ingredients[] = ['ingrId' => intval(), 'prodId' => $product->id];
             ProductIngredient::create([
                 'ingrId' => $ingrId,
                 'prodId' => $product->id,
             ]);
         }
-        // dd($ingredients);
 
-        // ProductIngredient::insertMany($ingredients);
         return redirect()->route('products.index')->with('success', 'Product created successfully');
     }
 
@@ -73,6 +73,8 @@ class ProductController extends Controller
      */
     public function show(string $id)
     {
+        Gate::authorize('view', Product::class);
+
         $product = Product::findOrFail($id);
         return view('product.show', ['product' => $product]);
     }
@@ -87,6 +89,7 @@ class ProductController extends Controller
         $product = Product::findOrFail($id);
         $categories = Category::orderBy('name')->get();
         $ingredients = Ingredient::orderBy('name')->get();
+
         return view('product.edit', ['product' => $product, 'categories' => $categories, 'ingredients' => $ingredients]);
     }
 
@@ -102,6 +105,7 @@ class ProductController extends Controller
             'description' => 'nullable | string | max:255',
             'catid' => 'required | integer',
             'ingredientsList' => 'required | array',
+            'status' => 'required|in:available,unavailable',
         ]);
 
         $product = Product::findOrFail($id);
@@ -110,6 +114,7 @@ class ProductController extends Controller
             'name' => $validatedData['name'],
             'description' => $validatedData['description'],
             'catid' => $validatedData['catid'],
+            'status' => $validatedData['status'],
         ]);
 
         ProductIngredient::where('prodId', $id)->delete();
@@ -131,5 +136,9 @@ class ProductController extends Controller
     public function destroy(string $id)
     {
         Gate::authorize('delete', Product::class);
+
+        Product::destroy($id);
+
+        return redirect()->route('products.index')->with('success', 'Product deleted successfully');
     }
 }

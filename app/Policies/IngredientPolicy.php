@@ -29,7 +29,7 @@ class IngredientPolicy
      */
     public function create(User $user): bool
     {
-        return $user->role === 'admin' || $user->role === 'manager';
+        return $user->status === 'active' && ($user->role === 'admin' || $user->role === 'manager');
     }
 
     /**
@@ -37,7 +37,7 @@ class IngredientPolicy
      */
     public function update(User $user, Ingredient $ingredient): bool
     {
-        return $user->role === 'admin' || $user->role === 'manager';
+        return $user->status === 'active' && ($user->role === 'admin' || $user->role === 'manager');
     }
 
     /**

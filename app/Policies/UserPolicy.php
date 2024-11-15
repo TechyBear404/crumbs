@@ -2,11 +2,10 @@
 
 namespace App\Policies;
 
-use App\Models\Category;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
 
-class CategoryPolicy
+class UserPolicy
 {
     /**
      * Determine whether the user can view any models.
@@ -19,10 +18,11 @@ class CategoryPolicy
     /**
      * Determine whether the user can view the model.
      */
-    // public function view(User $user, Category $category): bool
-    // {
-    //     //
-    // }
+    // public function view(User $user, User $model): bool
+    public function view(User $user): bool
+    {
+        return $user->status === 'active' && ($user->role === 'admin' || $user->role === 'manager');
+    }
 
     /**
      * Determine whether the user can create models.
@@ -35,7 +35,8 @@ class CategoryPolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Category $category): bool
+    // public function update(User $user, User $model): bool
+    public function update(User $user): bool
     {
         return $user->status === 'active' && ($user->role === 'admin' || $user->role === 'manager');
     }
@@ -43,7 +44,8 @@ class CategoryPolicy
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Category $category): bool
+    public function delete(User $user): bool
+    // public function delete(User $user, User $model): bool
     {
         return $user->status === 'active' && ($user->role === 'admin' || $user->role === 'manager');
     }
@@ -51,7 +53,7 @@ class CategoryPolicy
     /**
      * Determine whether the user can restore the model.
      */
-    // public function restore(User $user, Category $category): bool
+    // public function restore(User $user, User $model): bool
     // {
     //     //
     // }
@@ -59,7 +61,7 @@ class CategoryPolicy
     /**
      * Determine whether the user can permanently delete the model.
      */
-    // public function forceDelete(User $user, Category $category): bool
+    // public function forceDelete(User $user, User $model): bool
     // {
     //     //
     // }
