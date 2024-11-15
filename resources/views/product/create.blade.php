@@ -5,50 +5,32 @@
         <form action="{{ route('products.store') }}" method="POST">
             @csrf
             <div class="mb-4">
-                <label class="block text-sm font-bold mb-2">Nom</label>
-                <input type="text" name="name" class="w-full border border-gray-300 px-3 py-2"
-                    value="{{ old('name') }}">
-                @error('name')
-                    <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
-                @enderror
+                <x-input-label name="name" value="Nom" />
+                <x-text-input name="name" :value="old('name')" />
+                <x-input-error :messages="$errors->get('name')" />
             </div>
             <div class="mb-4">
-                <label class="block text-sm font-bold mb-2">Description</label>
-                <input type="text" name="description" class="w-full border border-gray-300 px-3 py-2"
-                    value="{{ old('description') }}">
-                @error('description')
-                    <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
-                @enderror
+                <x-input-label name="description" value="Description" />
+                <x-text-input name="description" :value="old('description')" />
+                <x-input-error :messages="$errors->get('description')" />
             </div>
             <div class="mb-4">
-                {{-- // add + button to label route to category.create page to create a new category --}}
                 <div class="flex gap-2 items-center mb-2">
-                    <label class="block text-sm font-bold">Catégorie</label>
+                    <x-input-label name="catid" value="Catégorie" />
                     <a href="{{ route('categories.create', ['redirect_url' => route('products.create')]) }}"
                         class="text-blue-500 ">+</a>
                 </div>
-                <select name="catid" class="w-full border border-gray-300 px-3 py-2">
-                    @foreach ($categories as $category)
-                        <option value="{{ $category->id }}">{{ $category->name }}</option>
-                    @endforeach
-                </select>
-                @error('catid')
-                    <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
-                @enderror
+                <x-input-select-dynamic name="catid" :options="$categories" />
+                <x-input-error :messages="$errors->get('catid')" />
             </div>
-            {{-- a multiselect dropdown for ingredients --}}
             <div class="mb-4">
                 <div class="flex gap-2 items-center mb-2">
-                    <label class="block text-sm font-bold">Ingrédients</label>
+                    <x-input-label name="status" value="Statut" />
                     <a href="{{ route('ingredients.create', ['redirect_url' => route('products.create')]) }}"
                         class="text-blue-500 ">+</a>
                 </div>
                 <div class="flex gap-2 items-center mb-2">
-                    <select id="ingredientSelect" class="flex-1">
-                        @foreach ($ingredients as $ingredient)
-                            <option value="{{ $ingredient->id }}">{{ $ingredient->name }}</option>
-                        @endforeach
-                    </select>
+                    <x-input-select-dynamic id="ingredientSelect" name="status" :options="$ingredients" />
                     <button type="button" class="bg-blue-500 text-white px-4 py-2" onclick="addIngredient()">+</button>
                 </div>
                 <div id="ingredientList" class="flex flex-wrap gap-2">
@@ -67,9 +49,7 @@
                         @endforeach
                     @endif
                 </div>
-                @error('ingredients')
-                    <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
-                @enderror
+                <x-input-error :messages="$errors->get('ingredientsList')" />
             </div>
             <button type="submit" class="bg-blue-500 text-white px-4 py-2">Créer</button>
             <button type="button" class="bg-red-500 text-white px-4 py-2">

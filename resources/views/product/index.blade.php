@@ -28,19 +28,21 @@
                     {{-- <td>{{ $product->ingredients() }}</td> --}}
                     <td>
                         @foreach ($product->ingredients as $ingredient)
-                            <span class="bg-blue-600 rounded text-gray-100 px-2 py-1">{{ $ingredient->name }}</span>
+                            <span
+                                class="bg-blue-600 rounded-full text-gray-100 px-2 py-0.5 text-sm">{{ $ingredient->name }}</span>
                         @endforeach
                     </td>
                     {{-- add edit and delete buttons --}}
-
-                    <td class="flex gap-4">
-                        <a href="{{ route('products.edit', $product->id) }}" class="text-blue-500">Edit</a>
-                        <form action="{{ route('products.destroy', $product->id) }}" method="POST">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="text-red-500">Delete</button>
-                        </form>
-                    </td>
+                    @if (Auth::user()->role == 'admin' || Auth::user()->role == 'manager')
+                        <td class="flex gap-4">
+                            <a href="{{ route('products.edit', $product->id) }}" class="text-blue-500">Edit</a>
+                            <form action="{{ route('products.destroy', $product->id) }}" method="POST">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="text-red-500">Delete</button>
+                            </form>
+                        </td>
+                    @endif
                 </tr>
             @endforeach
         </tbody>

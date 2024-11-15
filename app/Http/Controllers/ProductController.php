@@ -38,7 +38,7 @@ class ProductController extends Controller
     {
         // dd($request->all());
         $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|max:255|unique:App\Models\Product,name',
             'description' => 'nullable | string | max:255',
             'catid' => 'required | integer',
             'ingredientsList' => 'required | array',
@@ -87,6 +87,7 @@ class ProductController extends Controller
         $product = Product::findOrFail($id);
         $categories = Category::orderBy('name')->get();
         $ingredients = Ingredient::orderBy('name')->get();
+
         return view('product.edit', ['product' => $product, 'categories' => $categories, 'ingredients' => $ingredients]);
     }
 
@@ -131,5 +132,9 @@ class ProductController extends Controller
     public function destroy(string $id)
     {
         Gate::authorize('delete', Product::class);
+
+        Product::destroy($id);
+
+        return redirect()->route('products.index')->with('success', 'Product deleted successfully');
     }
 }

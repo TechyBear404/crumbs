@@ -5,38 +5,34 @@
         <form action="{{ route('users.store') }}" method="POST">
             @csrf
             <div class="mb-4">
-                <label class="block text-sm font-bold mb-2">Nom</label>
-                <input type="text" name="name" class="w-full border border-gray-300 px-3 py-2"
-                    value="{{ old('name') }}">
-                @error('name')
-                    <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
-                @enderror
+                <x-input-label name="name" value="Nom" />
+                <x-text-input name="name" :value="old('name')" />
+                <x-input-error :messages="$errors->get('name')" />
             </div>
             <div class="mb-4">
-                <label class="block text-sm font-bold mb-2">Email</label>
-                <input type="email" name="email" class="w-full border border-gray-300 px-3 py-2"
-                    value="{{ old('email') }}">
-                @error('email')
-                    <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
-                @enderror
+                <x-input-label name="email" value="Email" />
+                <x-text-input type="email" name="email" :value="old('email')" />
+                <x-input-error :messages="$errors->get('email')" />
             </div>
             <div class="mb-4">
-                <label class="block text-sm font-bold mb-2">Mot de passe</label>
-                <input type="password" name="password" class="w-full border border-gray-300 px-3 py-2">
-                @error('password')
-                    <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
-                @enderror
+                <x-input-label name="password" value="Mot de passe" />
+                <x-text-input type="password" name="password" />
+                <x-input-error :messages="$errors->get('password')" />
             </div>
             <div class="mb-4">
-                <label class="block text-sm font-bold mb-2">Rôle</label>
-                <select name="role" class="w-full border border-gray-300 px-3 py-2">
-                    <option value="user">Utilisateur</option>
-                    <option value="admin">Administrateur</option>
-                    <option value="manager">Manager</option>
-                </select>
-                @error('role')
-                    <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
-                @enderror
+                <x-input-label name="passwordConfirmation" value="Confirmer le mot de passe" />
+                <x-text-input type="password" name="passwordConfirmation" />
+                <x-input-error :messages="$errors->get('passwordConfirmation')" />
+            </div>
+            <div class="mb-4">
+                <x-input-label name="role" value="Rôle" />
+                <x-input-select name="role" :options="['user' => 'Utilisateur', 'admin' => 'Administrateur', 'manager' => 'Manager']" />
+                <x-input-error :messages="$errors->get('role')" />
+            </div>
+            <div class="mb-4">
+                <x-input-label name="status" value="Statut" />
+                <x-input-select name="status" :options="['active' => 'Actif', 'inactive' => 'Inactif']" />
+                <x-input-error :messages="$errors->get('status')" />
             </div>
             <button type="submit" class="bg-blue-500 text-white px-4 py-2">Créer</button>
         </form>
