@@ -1,9 +1,10 @@
 <x-app-layout>
     <div class="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div class="flex gap-2 items-center mb-6">
+        <div class="flex gap-4 items-center mb-6">
             <h1 class="text-2xl font-bold mb">Liste des Utilisateurs</h1>
             @if (Auth::user()->role == 'admin' || Auth::user()->role == 'manager')
-                <a href="{{ route('users.create') }}" class="text-blue-500 text-xl">+</a>
+                <a href="{{ route('users.create') }}" class="text-blue-500 text-xl"><x-fas-user-plus class="w-5 h-5"
+                        title="Ajouter un utilisateur" /></a>
             @endif
         </div>
 
@@ -25,12 +26,15 @@
                         <td class="py-2 px-4 border-b">{{ $user->role }}</td>
                         <td class="py-2 px-4 border-b">{{ $user->status }}</td>
                         <td class="py-2 px-4 border-b flex gap-2 justify-center">
-                            <a href="{{ route('users.show', $user->id) }}" class="text-blue-500">Voir</a>
-                            <a href="{{ route('users.edit', $user->id) }}" class="text-yellow-500 ml-2">Modifier</a>
+                            <a href="{{ route('users.show', $user->id) }}" class="text-blue-500"><x-fas-user
+                                    class="w-5 h-5" title="Afficher l'utilisateur" /></a>
+                            <a href="{{ route('users.edit', $user->id) }}" class="text-orange-400 ml-2"><x-fas-edit
+                                    class="w-5 h-5" title="Editer l'utilisateur" /></a>
                             <form action="{{ route('users.destroy', $user->id) }}" method="POST" class="inline">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="text-red-500">Supprimer</button>
+                                <button type="submit" class="text-red-500"><x-fas-trash-alt class="w-5 h-5"
+                                        title="Supprimer l'utilisateur" /></button>
                             </form>
                         </td>
                     </tr>

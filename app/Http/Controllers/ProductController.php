@@ -47,6 +47,7 @@ class ProductController extends Controller
             'description' => 'nullable | string | max:255',
             'catid' => 'required | integer',
             'ingredientsList' => 'required | array',
+            'status' => 'required|in:available,unavailable',
         ]);
 
 
@@ -54,6 +55,7 @@ class ProductController extends Controller
             'name' => $validatedData['name'],
             'description' => $validatedData['description'],
             'catid' => $validatedData['catid'],
+            'status' => $validatedData['status'],
         ]);
 
         foreach ($validatedData['ingredientsList'] as $ingrId) {
@@ -103,6 +105,7 @@ class ProductController extends Controller
             'description' => 'nullable | string | max:255',
             'catid' => 'required | integer',
             'ingredientsList' => 'required | array',
+            'status' => 'required|in:available,unavailable',
         ]);
 
         $product = Product::findOrFail($id);
@@ -111,6 +114,7 @@ class ProductController extends Controller
             'name' => $validatedData['name'],
             'description' => $validatedData['description'],
             'catid' => $validatedData['catid'],
+            'status' => $validatedData['status'],
         ]);
 
         ProductIngredient::where('prodId', $id)->delete();

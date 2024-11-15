@@ -7,38 +7,38 @@
             @csrf
             @method('PUT')
             <div class="mb-4">
-                <x-input-label name="name" value="Nom" />
+                <x-input-label name="name" value="Nom" class="mb-1" />
                 <x-text-input name="name" :value="old('name', $user->name)" />
                 <x-input-error :messages="$errors->get('name')" />
             </div>
             <div class="mb-4">
-                <x-input-label name="email" value="Email" />
+                <x-input-label name="email" value="Email" class="mb-1" />
                 <x-text-input type="email" name="email" :value="old('email', $user->email)" />
                 <x-input-error :messages="$errors->get('email')" />
             </div>
             <div class="mb-4">
-                <x-input-label name="password" value="Nouveau mot de passe" />
+                <x-input-label name="password" value="Nouveau mot de passe" class="mb-1" />
                 <x-text-input type="password" name="password" />
                 <x-input-error :messages="$errors->get('password')" />
             </div>
             <div class="mb-4">
-                <x-input-label name="passwordConfirmation" value="Confirmer le mot de passe" />
+                <x-input-label name="passwordConfirmation" value="Confirmer le mot de passe" class="mb-1" />
                 <x-text-input type="password" name="passwordConfirmation" />
                 <x-input-error :messages="$errors->get('passwordConfirmation')" />
             </div>
             <div class="mb-4">
-                <x-input-label name="role" value="Rôle" />
+                <x-input-label name="role" value="Rôle" class="mb-1" />
                 <x-input-select name="role" :options="['user' => 'Utilisateur', 'admin' => 'Administrateur', 'manager' => 'Manager']" :selected="$user->role" />
                 <x-input-error :messages="$errors->get('role')" />
             </div>
             <div class="mb-4">
-                <x-input-label name="status" value="Statut" />
+                <x-input-label name="status" value="Statut" class="mb-1" />
                 <x-input-select name="status" :options="['active' => 'Actif', 'inactive' => 'Inactif']" :selected="$user->status" />
                 <x-input-error :messages="$errors->get('status')" />
             </div>
             <div class="flex gap-4">
-                <button type="submit" class="bg-blue-500 text-white px-4 py-2">Mettre à jour</button>
-                <button type="button" class="bg-red-500 text-white px-4 py-2">
+                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Mettre à jour</button>
+                <button type="button" class="bg-red-500 text-white px-4 py-2 rounded">
                     <a href="{{ url()->previous() }}">Annuler</a>
                 </button>
             </div>

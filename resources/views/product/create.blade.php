@@ -6,17 +6,17 @@
             class="bg-white rounded overflow-hidden p-4 border border-gray-200">
             @csrf
             <div class="mb-4">
-                <x-input-label name="name" value="Nom" />
+                <x-input-label name="name" value="Nom" class="mb-1" />
                 <x-text-input name="name" :value="old('name')" />
                 <x-input-error :messages="$errors->get('name')" />
             </div>
             <div class="mb-4">
-                <x-input-label name="description" value="Description" />
+                <x-input-label name="description" value="Description" class="mb-1" />
                 <x-text-input name="description" :value="old('description')" />
                 <x-input-error :messages="$errors->get('description')" />
             </div>
             <div class="mb-4">
-                <div class="flex gap-2 items-center mb-2">
+                <div class="flex gap-2 items-center">
                     <x-input-label name="catid" value="Catégorie" />
                     <a href="{{ route('categories.create', ['redirect_url' => route('products.create')]) }}"
                         class="text-blue-500 ">+</a>
@@ -25,14 +25,15 @@
                 <x-input-error :messages="$errors->get('catid')" />
             </div>
             <div class="mb-4">
-                <div class="flex gap-2 items-center mb-2">
+                <div class="flex gap-2 items-center">
                     <x-input-label name="ingredients" value="Ingredients" />
                     <a href="{{ route('ingredients.create', ['redirect_url' => route('products.create')]) }}"
                         class="text-blue-500 ">+</a>
                 </div>
                 <div class="flex gap-2 items-center mb-2">
                     <x-input-select-dynamic id="ingredientSelect" name="ingredients" :options="$ingredients" />
-                    <button type="button" class="bg-blue-500 text-white px-4 py-2" onclick="addIngredient()">+</button>
+                    <button type="button" class="bg-blue-500 text-white px-4 py-2 text-xl rounded"
+                        onclick="addIngredient()">+</button>
                 </div>
                 <div id="ingredientList" class="flex flex-wrap gap-2">
                     @if (old('ingredientsList'))
@@ -52,14 +53,14 @@
                 </div>
                 <x-input-error :messages="$errors->get('ingredientsList')" />
             </div>
-            <div class="mb-4">
-                <x-input-label name="status" value="Status" />
+            <div class="mb-6">
+                <x-input-label name="status" value="Status" class="mb-1" />
                 <x-input-select name="status" :options="['available' => 'Disponible', 'unavailable' => 'Indisponible']" />
                 <x-input-error :messages="$errors->get('status')" />
             </div>
-            <div class="flex gap-4">
-                <button type="submit" class="bg-blue-500 text-white px-4 py-2">Créer</button>
-                <button type="button" class="bg-red-500 text-white px-4 py-2">
+            <div class="flex gap-2">
+                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Créer</button>
+                <button type="button" class="bg-red-500 text-white px-4 py-2 rounded">
                     <a href="{{ url()->previous() }}">Annuler</a>
                 </button>
             </div>

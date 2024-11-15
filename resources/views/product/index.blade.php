@@ -5,7 +5,7 @@
                 {{ __('Products') }}
             </h2>
             @if (Auth::user()->role == 'admin' || Auth::user()->role == 'manager')
-                <a href="{{ route('products.create') }}" class="text-blue-500 text-xl">+</a>
+                <a href="{{ route('products.create') }}" class="text-blue-500 text-xl"><x-fas-plus class="w-5 h-5" /></a>
             @endif
             <button id="toggleViewButton" class="ml-auto bg-blue-500 text-white px-4 py-2" onclick="toggleView()">Switch to
                 Table View</button>
@@ -19,78 +19,102 @@
             <div class="min-w-60 h-full bg-white shadow-md rounded-lg overflow-hidden p-6">
                 menu
             </div>
-            <div id="tableView" class="hidden">
-                <table class="min-w-full bg-white">
-                    <thead>
-                        <tr>
-                            <th class="py-2 px-4 border-b border-gray-200">Nom</th>
-                            <th class="py-2 px-4 border-b border-gray-200">Statut</th>
-                            <th class="py-2 px-4 border-b border-gray-200">Catégorie</th>
-                            <th class="py-2 px-4 border-b border-gray-200">Description</th>
-                            <th class="py-2 px-4 border-b border-gray-200">Ingrédients</th>
-                            @if (Auth::user()->role == 'admin' || Auth::user()->role == 'manager')
-                                <th class="py-2 px-4 border-b border-gray-200">Actions</th>
-                            @endif
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($products as $product)
-                            <tr class="cursor-pointer hover:bg-gray-100"
-                                onclick="window.location='{{ route('products.show', $product->id) }}'">
-                                <td class="py-2 px-4 border-b border-gray-200">{{ $product->name }}</td>
-                                <td class="py-2 px-4 border-b border-gray-200">{{ $product->status }}</td>
-                                <td class="py-2 px-4 border-b border-gray-200">{{ $product->category->name }}</td>
-                                <td class="py-2 px-4 border-b border-gray-200">{{ $product->description }}</td>
-                                <td class="py-2 px-4 border-b border-gray-200">
-                                    @foreach ($product->ingredients as $ingredient)
-                                        <span
-                                            class="bg-blue-600 rounded-full text-gray-100 px-2 py-0.5 text-sm">{{ $ingredient->name }}</span>
-                                    @endforeach
-                                </td>
+            <div>
+                <div id="tableView" class="hidden">
+                    <table class="min-w-full bg-white rounded-lg">
+                        <thead>
+                            <tr>
+                                <th class="border-b border-gray-200"></th>
+                                <th class="py-2 px-4 border-b border-gray-200">Nom</th>
+                                <th class="py-2 px-4 border-b border-gray-200">Catégorie</th>
+                                <th class="py-2 px-4 border-b border-gray-200">Description</th>
+                                <th class="py-2 px-4 border-b border-gray-200">Ingrédients</th>
                                 @if (Auth::user()->role == 'admin' || Auth::user()->role == 'manager')
-                                    <td class="py-2 px-4 border-b border-gray-200 flex gap-4">
-                                        <a href="{{ route('products.edit', $product->id) }}"
-                                            class="text-blue-500">Edit</a>
-                                        <form action="{{ route('products.destroy', $product->id) }}" method="POST">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="text-red-500">Delete</button>
-                                        </form>
-                                    </td>
+                                    <th class="py-2 px-4 border-b border-gray-200">Actions</th>
                                 @endif
                             </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
+                        </thead>
+                        <tbody>
+                            @foreach ($products as $product)
+                                <tr class="cursor-pointer hover:bg-gray-100"
+                                    onclick="window.location='{{ route('products.show', $product->id) }}'">
+                                    <td class="border-b border-gray-200">
+                                        @if ($product->status == 'unavailable')
+                                            <x-fas-circle-exclamation class="text-red-500 h-5 w-5 ml-2"
+                                                title="Indisponible" />
+                                        @endif
 
-            <div id="cardView" class="block">
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    @foreach ($products as $product)
-                        <div class="bg-white shadow-md rounded-lg overflow-hidden p-6 cursor-pointer hover:bg-gray-100"
-                            onclick="window.location='{{ route('products.show', $product->id) }}'">
-                            <h2 class="text-lg font-semibold mb-2">{{ $product->name }}</h2>
-                            <p class="text-gray-700 mb-2"><strong>Statut:</strong> {{ $product->status }}</p>
-                            {{-- <p class="text-gray-700 mb-2"><strong>Catégorie:</strong> {{ $product->category->name }}</p>
-                            <p class="text-gray-700 mb-2"><strong>Description:</strong> {{ $product->description }}</p>
-                            <div class="flex flex-wrap gap-2"> --}}
-                            @foreach ($product->ingredients as $ingredient)
-                                <span
-                                    class="bg-blue-600 rounded-full text-gray-100 px-2 py-0.5 text-sm">{{ $ingredient->name }}</span>
+                                    </td>
+                                    <td class="py-2 px-4 border-b border-gray-200 font-semibold">
+                                        {{ $product->name }}
+                                    </td>
+                                    <td class="py-2 px-4 border-b border-gray-200">{{ $product->category->name }}</td>
+                                    <td class="py-2 px-4 border-b border-gray-200">{{ $product->description }}</td>
+                                    <td class="py-2 px-4 border-b border-gray-200">
+                                        @foreach ($product->ingredients as $ingredient)
+                                            <span class="py-0.5 text-sm font-medium">{{ $ingredient->name }},</span>
+                                        @endforeach
+                                    </td>
+                                    @if (Auth::user()->role == 'admin' || Auth::user()->role == 'manager')
+                                        <td class="py-2 px-4 border-b border-gray-200 flex gap-1">
+                                            <a href="{{ route('products.edit', $product->id) }}"
+                                                class="text-orange-400">
+                                                <x-fas-edit class="w-5 h-5" title="Editer le produit" />
+                                            </a>
+                                            <form action="{{ route('products.destroy', $product->id) }}" method="POST">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="text-red-500">
+                                                    <x-fas-trash-alt class="w-5 h-5" title="Supprimer le produit" />
+                                                </button>
+                                            </form>
+                                        </td>
+                                    @endif
+                                </tr>
                             @endforeach
-                            @if (Auth::user()->role == 'admin' || Auth::user()->role == 'manager')
-                                <div class="flex gap-4 mt-4">
-                                    <a href="{{ route('products.edit', $product->id) }}" class="text-blue-500">Edit</a>
-                                    <form action="{{ route('products.destroy', $product->id) }}" method="POST">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="text-red-500">Delete</button>
-                                    </form>
-                                </div>
-                            @endif
-                        </div>
+                        </tbody>
+                    </table>
                 </div>
-                @endforeach
+
+                <div id="cardView" class="block">
+                    <div class="columns-4 gap-1">
+                        @foreach ($products as $product)
+                            <div class="bg-white shadow-md rounded-lg p-4 mr-0.5 cursor-pointer hover:bg-gray-100 h-40"
+                                onclick="window.location='{{ route('products.show', $product->id) }}'">
+
+                                <div class="flex mb-2 justify-between">
+                                    <div class="flex items-center mb-2 gap-2">
+                                        @if ($product->status == 'unavailable')
+                                            <x-fas-circle-exclamation class="text-red-500 h-5 w-5"
+                                                title="Indisponible" />
+                                        @endif
+                                        <h2 class="text-xl font-bold">{{ $product->name }}</h2>
+                                    </div>
+
+                                    @if (Auth::user()->role == 'admin' || Auth::user()->role == 'manager')
+                                        <div class="flex gap-1 ">
+                                            <a href="{{ route('products.edit', $product->id) }}"
+                                                class="text-orange-400"><x-fas-edit class="w-5 h-5"
+                                                    title="Editer le produit" /></a>
+                                            <form action="{{ route('products.destroy', $product->id) }}"
+                                                method="POST">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="text-red-500">
+                                                    <x-fas-trash-alt class="w-5 h-5" title="Supprimer le produit" />
+                                                </button>
+                                            </form>
+                                        </div>
+                                    @endif
+                                </div>
+                                @foreach ($product->ingredients as $ingredient)
+                                    <span class="py-0.5 text-sm font-medium">{{ $ingredient->name }},</span>
+                                @endforeach
+
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
             </div>
         </div>
     </div>
