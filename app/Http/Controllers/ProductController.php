@@ -14,13 +14,33 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         Gate::authorize('view', Product::class);
 
-        $products = Product::all();
-        // dd($products);
-        return view('product.index', ['products' => $products]);
+        // dd($request->all());
+
+        $validatedData = $request->validate([
+            'name' => 'nullable | string | max:255',
+            'catid' => 'nullable | array',
+            'catid.*' => 'integer'
+        ]);
+
+        $query = Product::query();
+
+        if ($request->has('name')) {
+            $query->where('name', 'like', '%' . $validatedData['name'] . '%');
+        }
+
+        if ($request->has('catid')) {
+            $query->whereIn('catid', $validatedData['catid']);
+        }
+
+
+        $categories = Category::orderBy('name')->get();
+        $products = $query->paginate(10);
+        // $products = Product::paginate(10);
+        return view('product.index', compact('products', 'categories'));
     }
 
     /**
