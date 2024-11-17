@@ -12,16 +12,18 @@ class Product extends Model
         'name',
         'description',
         'status',
-        'catid',
+        'categoryId',
+        'price',
+        'price_big',
     ];
 
     public function category(): BelongsTo
     {
-        return $this->belongsTo(Category::class, 'catid');
+        return $this->belongsTo(Category::class, 'categoryId');
     }
 
     public function ingredients(): BelongsToMany
     {
-        return $this->belongsToMany(Ingredient::class, 'products_ingredients', 'prodId', 'ingrId');
+        return $this->belongsToMany(Ingredient::class, 'products_ingredients', 'productId', 'ingredientId');
     }
 }

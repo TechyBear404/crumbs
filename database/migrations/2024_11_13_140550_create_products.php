@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->foreignId('catid')->constrained('categories')->onDelete('cascade');
+            $table->foreignId('categoryId')->constrained('categories')->onDelete('cascade');
             $table->enum('status', ['available', 'unavailable'])->default('available');
             $table->text('description')->nullable();
             $table->timestamps();

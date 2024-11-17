@@ -36,7 +36,7 @@
                     </label>
                     <label class="flex items
                     -center">
-                        <input type="radio" name="isAllergen" value="0" class="mr-2">
+                        <input type="radio" name="isAllergen" value="0" class="mr-2" checked>
                         <span>Non</span>
                     </label>
                 </div>

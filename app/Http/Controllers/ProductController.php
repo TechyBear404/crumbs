@@ -22,8 +22,8 @@ class ProductController extends Controller
 
         $validatedData = $request->validate([
             'name' => 'nullable | string | max:255',
-            'catid' => 'nullable | array',
-            'catid.*' => 'integer'
+            'categoryId' => 'nullable | array',
+            'categoryId.*' => 'integer'
         ]);
 
         $query = Product::query();
@@ -32,8 +32,8 @@ class ProductController extends Controller
             $query->where('name', 'like', '%' . $validatedData['name'] . '%');
         }
 
-        if ($request->has('catid')) {
-            $query->whereIn('catid', $validatedData['catid']);
+        if ($request->has('categoryId')) {
+            $query->whereIn('categoryId', $validatedData['categoryId']);
         }
 
 
@@ -65,7 +65,7 @@ class ProductController extends Controller
         $validatedData = $request->validate([
             'name' => 'required|string|max:255|unique:App\Models\Product,name',
             'description' => 'nullable | string | max:255',
-            'catid' => 'required | integer',
+            'categoryId' => 'required | integer',
             'ingredientsList' => 'required | array',
             'status' => 'required|in:available,unavailable',
         ]);
@@ -74,14 +74,14 @@ class ProductController extends Controller
         $product = Product::create([
             'name' => $validatedData['name'],
             'description' => $validatedData['description'],
-            'catid' => $validatedData['catid'],
+            'categoryId' => $validatedData['categoryId'],
             'status' => $validatedData['status'],
         ]);
 
-        foreach ($validatedData['ingredientsList'] as $ingrId) {
+        foreach ($validatedData['ingredientsList'] as $ingredientId) {
             ProductIngredient::create([
-                'ingrId' => $ingrId,
-                'prodId' => $product->id,
+                'ingredientId' => $ingredientId,
+                'productId' => $product->id,
             ]);
         }
 
@@ -123,7 +123,7 @@ class ProductController extends Controller
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable | string | max:255',
-            'catid' => 'required | integer',
+            'categoryId' => 'required | integer',
             'ingredientsList' => 'required | array',
             'status' => 'required|in:available,unavailable',
         ]);
@@ -133,17 +133,17 @@ class ProductController extends Controller
         $product->update([
             'name' => $validatedData['name'],
             'description' => $validatedData['description'],
-            'catid' => $validatedData['catid'],
+            'categoryId' => $validatedData['categoryId'],
             'status' => $validatedData['status'],
         ]);
 
         ProductIngredient::where('prodId', $id)->delete();
 
         // $ingredients = [];
-        foreach ($validatedData['ingredientsList'] as $ingrId) {
+        foreach ($validatedData['ingredientsList'] as $ingredientId) {
             ProductIngredient::create([
-                'ingrId' => $ingrId,
-                'prodId' => $product->id,
+                'ingredientId' => $ingredientId,
+                'productId' => $product->id,
             ]);
         }
 

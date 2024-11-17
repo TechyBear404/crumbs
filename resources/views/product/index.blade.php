@@ -29,13 +29,13 @@
                     <div class="mb-4">
                         @foreach ($categories as $categorie)
                             <div>
-                                <input type="checkbox" name="catid[]" value="{{ $categorie->id }}"
-                                    {{ in_array($categorie->id, request('catid', [])) ? 'checked' : '' }} />
+                                <input type="checkbox" name="categoryId[]" value="{{ $categorie->id }}"
+                                    {{ in_array($categorie->id, request('categoryId', [])) ? 'checked' : '' }} />
                                 <span>{{ $categorie->name }}</span>
                             </div>
                         @endforeach
-                        {{-- <x-input-label name="catid" value="Catégorie" class="mb-1" />
-                        <x-input-select-dynamic name="catid" :options="$categories" :selected="request('catid')" /> --}}
+                        {{-- <x-input-label name="categoryId" value="Catégorie" class="mb-1" />
+                        <x-input-select-dynamic name="categoryId" :options="$categories" :selected="request('categoryId')" /> --}}
                     </div>
 
                     <div class="flex gap-2 pt-4">
@@ -211,7 +211,7 @@
             }
             const filterForm = document.getElementById('filterForm');
             const filterName = document.getElementById('filterName');
-            const categoryCheckboxes = document.querySelectorAll('input[name="catid[]"]');
+            const categoryCheckboxes = document.querySelectorAll('input[name="categoryId[]"]');
 
             // filterName.addEventListener('input', function() {
             //     filterForm.submit();

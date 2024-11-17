@@ -18,12 +18,12 @@
             </div>
             <div class="mb-4">
                 <div class="flex gap-2 items-center">
-                    <x-input-label name="catid" value="Catégorie" />
+                    <x-input-label name="categoryId" value="Catégorie" />
                     <a href="{{ route('categories.create', ['redirect_url' => route('products.create')]) }}"
                         class="text-blue-500 ">+</a>
                 </div>
-                <x-input-select-dynamic name="catid" :options="$categories" :selected="$product->catid" />
-                <x-input-error :messages="$errors->get('catid')" />
+                <x-input-select-dynamic name="categoryId" :options="$categories" :selected="$product->categoryId" />
+                <x-input-error :messages="$errors->get('categoryId')" />
             </div>
             <div class="mb-4">
                 <div class="flex gap-2 items-center">
