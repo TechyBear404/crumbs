@@ -1,22 +1,24 @@
 <x-app-layout>
-    <x-slot name="header">
-        <div class="flex gap-2 items-center">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                Liste des Produits
-            </h2>
-            @if (Auth::user()->role == 'admin' || Auth::user()->role == 'manager')
-                <a href="{{ route('products.create') }}" class="text-blue-500 text-xl"><x-fas-plus class="w-5 h-5" /></a>
-            @endif
-            <button id="toggleViewButton" class="ml-auto bg-blue-500 text-white px-4 py-2" onclick="toggleView()">Switch to
-                Table View</button>
-        </div>
-    </x-slot>
 
     <div class="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <x-slot name="header">
+            <div class="flex gap-2 items-center">
+                <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                    Liste des Produits
+                </h2>
+                @if (Auth::user()->role == 'admin' || Auth::user()->role == 'manager')
+                    <a href="{{ route('products.create') }}" class="text-blue-500 text-xl"><x-fas-plus
+                            class="w-5 h-5" /></a>
+                @endif
+                <button id="toggleViewButton" class="ml-auto bg-blue-500 text-white px-4 py-2"
+                    onclick="toggleView()">Switch to
+                    Table View</button>
+            </div>
+        </x-slot>
         {{-- <h1 class="text-2xl font-bold mb-6">Liste des Produits</h1> --}}
 
-        <div class="flex gap-4 h-full">
-            <div class="min-w-60 h-full bg-white shadow-md rounded-lg overflow-hidden p-6">
+        <div class="flex gap-4 min-h-[calc(100vh-14rem)]">
+            <div class="min-w-60 bg-white shadow-md rounded-lg overflow-hidden p-6 sticky top-8">
                 {{-- create filters for products --}}
                 <form id="filterForm" action="{{ route('products.index') }}" method="GET">
                     <div class="mb-4">
@@ -86,19 +88,22 @@
                                         @endforeach
                                     </td>
                                     @if (Auth::user()->role == 'admin' || Auth::user()->role == 'manager')
-                                        <td class="py-2 px-4 border-b border-gray-200 flex gap-1">
-                                            <a href="{{ route('products.edit', $product->id) }}"
-                                                class="text-orange-400">
-                                                <x-fas-edit class="w-5 h-5" title="Editer le produit" />
-                                            </a>
-                                            <form action="{{ route('products.destroy', $product->id) }}"
-                                                method="POST">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="text-red-500">
-                                                    <x-fas-trash-alt class="w-5 h-5" title="Supprimer le produit" />
-                                                </button>
-                                            </form>
+                                        <td class="py-2 px-4 border-b border-gray-200 ">
+                                            <div class="flex gap-1 h-full">
+
+                                                <a href="{{ route('products.edit', $product->id) }}"
+                                                    class="text-orange-400">
+                                                    <x-fas-edit class="w-5 h-5" title="Editer le produit" />
+                                                </a>
+                                                <form action="{{ route('products.destroy', $product->id) }}"
+                                                    method="POST">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="text-red-500">
+                                                        <x-fas-trash-alt class="w-5 h-5" title="Supprimer le produit" />
+                                                    </button>
+                                                </form>
+                                            </div>
                                         </td>
                                     @endif
                                 </tr>
@@ -107,7 +112,7 @@
                     </table>
                 </div>
 
-                <div id="cardView" class="block grow">
+                <div id="cardView" class="hidden grow">
                     @if ($products->isEmpty())
                         <div class="text-center bg-white shadow-md rounded-lg p-4 mr-0.5 w-full">
                             Aucun produit trouvé
@@ -128,7 +133,7 @@
                                         </div>
 
                                         @if (Auth::user()->role == 'admin' || Auth::user()->role == 'manager')
-                                            <div class="flex gap-1 ">
+                                            <div class="flex gap-1">
                                                 <a href="{{ route('products.edit', $product->id) }}"
                                                     class="text-orange-400"><x-fas-edit class="w-5 h-5"
                                                         title="Editer le produit" /></a>
@@ -163,22 +168,47 @@
             const cardView = document.getElementById('cardView');
             const toggleButton = document.getElementById('toggleViewButton');
 
+
             if (tableView.classList.contains('block')) {
                 tableView.classList.remove('block');
                 tableView.classList.add('hidden');
                 cardView.classList.remove('hidden');
                 cardView.classList.add('block');
                 toggleButton.textContent = 'Switch to Table View';
+                localStorage.setItem('productsView', 'card');
             } else {
                 tableView.classList.remove('hidden');
                 tableView.classList.add('block');
                 cardView.classList.remove('block');
                 cardView.classList.add('hidden');
                 toggleButton.textContent = 'Switch to Card View';
+                localStorage.setItem('productsView', 'table');
             }
         }
 
         document.addEventListener('DOMContentLoaded', function() {
+            let productsView = localStorage.getItem('productsView');
+            const tableView = document.getElementById('tableView');
+            const cardView = document.getElementById('cardView');
+            const toggleButton = document.getElementById('toggleViewButton');
+
+            if (productsView == null) {
+                localStorage.setItem('productsView', 'card');
+                productsView = 'card';
+            }
+
+            if (productsView === 'card') {
+                cardView.classList.remove('hidden');
+                cardView.classList.add('block');
+                toggleButton.textContent = 'Switch to Table View';
+                localStorage.setItem('productsView', 'card');
+
+            } else {
+                tableView.classList.remove('hidden');
+                tableView.classList.add('block');
+                toggleButton.textContent = 'Switch to Card View';
+                localStorage.setItem('productsView', 'table');
+            }
             const filterForm = document.getElementById('filterForm');
             const filterName = document.getElementById('filterName');
             const categoryCheckboxes = document.querySelectorAll('input[name="catid[]"]');
