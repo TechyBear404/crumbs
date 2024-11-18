@@ -147,7 +147,6 @@ class ProductController extends Controller
     {
         Gate::authorize('update', Product::class);
 
-
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string|max:255',
@@ -155,13 +154,13 @@ class ProductController extends Controller
             'ingredientsList' => 'required|array',
             'status' => 'required|in:available,unavailable',
             'variations' => 'required|array',
-            'variations.*.size' => 'required|string|in:normal,large|unique:App\Models\ProductVariations,name',
+            'variations.*.size' => 'required|string|in:normal,large',
             'variations.*.price' => 'required|numeric|min:0',
         ]);
 
         $product = Product::findOrFail($id);
 
-        dd($product->variations);
+        // dd($product->variations);
 
         $product->update([
             'name' => $validatedData['name'],
@@ -181,38 +180,30 @@ class ProductController extends Controller
         }
 
         $variationId = Variation::where('type', 'size')->first()->id;
+
+        // Collect the sizes from the validated data
+        $newVariationSizes = collect($validatedData['variations'])->pluck('size')->toArray();
+
+        // Delete variations that are not in the new variation sizes
+        $product->variations()->whereNotIn('name', $newVariationSizes)->delete();
+
         // Update variations and prices
         foreach ($validatedData['variations'] as $variation) {
-            // edit or add new variation and price if not exists
-            $productVariation = ProductVariations::upsert(
-                [
+
+            $productVariation = $product->variations()->where('name', $variation['size'])->first();
+            if (!$productVariation) {
+                $productVariation = ProductVariations::create([
                     'productId' => $product->id,
                     'variationId' => $variationId,
                     'name' => $variation['size']
-                ],
-                [
-                    'productId' => $product->id,
-                    'variationId' => $variationId,
-                    'name' => $variation['size']
-                ]
-            );
+                ]);
+            }
 
-
-            // $productVariation = ProductVariations::where('productId', $product->id)
-            //     ->where('variationId', $variationId)
-            //     ->where('name', $variation['size'])
-            //     ->first();
-
-            // if there is price for this  variation with no end date, update the end date
             if ($productVariation->prices()->where('endDate', null)->exists()) {
                 $productVariation->prices()->where('endDate', null)->update([
                     'endDate' => Carbon::now()
                 ]);
             }
-            // $productVariation->prices()->where('endDate', null)->update([
-            //     'endDate' => Carbon::now()
-            // ]);
-
 
             $productVariation->prices()->create([
                 'startDate' => Carbon::now(),

@@ -29,4 +29,9 @@ class ProductVariations extends Model
     {
         return $this->hasMany(VariationPrice::class, 'productVariationId');
     }
+
+    public function ordered(): HasMany
+    {
+        return $this->hasMany(OrderDetail::class, 'productVariationId');
+    }
 }

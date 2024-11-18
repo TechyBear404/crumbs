@@ -66,7 +66,7 @@
                             <div>
                                 <x-input-label name="size" value="Taille" class="mb-1" />
                                 <x-input-select name="variations[{{ $index }}][size]" :options="['normal' => 'Normal', 'large' => 'Grand']"
-                                    :selected="$variation->size" />
+                                    :selected="$variation->name" />
                             </div>
                             <div>
                                 <x-input-label name="price" value="Prix" class="mb-1" />

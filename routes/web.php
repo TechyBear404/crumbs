@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\IngredientController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
@@ -23,6 +24,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('/categories', CategoryController::class);
     Route::resource('/ingredients', IngredientController::class);
     Route::resource('users', UserController::class);
+    Route::resource('orders', OrderController::class);
 });
 
 require __DIR__ . '/auth.php';

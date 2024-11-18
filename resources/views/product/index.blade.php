@@ -148,10 +148,56 @@
                                             </div>
                                         @endif
                                     </div>
-                                    @foreach ($product->ingredients as $ingredient)
-                                        <span class="py-0.5 text-sm font-medium">{{ $ingredient->name }},</span>
-                                    @endforeach
+                                    <div class="pb-2">
+                                        @foreach ($product->ingredients as $ingredient)
+                                            <span class="py-0.5 text-sm font-medium">{{ $ingredient->name }},</span>
+                                        @endforeach
+                                    </div>
+                                    @foreach ($product->variations as $variation)
+                                        <div class="grid grid-cols-3">
+                                            <div class="text-sm font-medium">
+                                                {{ $variation->name }}
+                                            </div>
+                                            <div class="text-sm font-medium">
+                                                {{ $variation->prices->where('endDate', null)->first()->price }}
+                                                €
+                                            </div>
+                                            <button onclick="$dispatch('open-modal', 'modal-name')">Open Modal</button>
 
+                                            {{-- Modal component --}}
+                                            <x-modal name="modal-name" :show="$errors->isNotEmpty()" maxWidth="md">
+                                                {{-- Modal content --}}
+                                                <div class="p-6">
+                                                    <h2 class="text-lg font-medium">Modal Title</h2>
+
+                                                    <div class="mt-4">
+                                                        Modal content goes here
+                                                    </div>
+
+                                                    <div class="mt-6 flex justify-end">
+                                                        <x-secondary-button onclick="$dispatch('close')">
+                                                            Cancel
+                                                        </x-secondary-button>
+
+                                                        <x-primary-button class="ml-3">
+                                                            Confirm
+                                                        </x-primary-button>
+                                                    </div>
+                                                </div>
+                                            </x-modal>
+                                            {{-- add product to cart button --}}
+                                            {{-- <form action="{{ route('orders.store') }}" method="POST">
+                                                @csrf
+                                                <input type="hidden" name="productId" value="{{ $product->id }}">
+                                                <input type="hidden" name="productVariationId"
+                                                    value="{{ $variation->id }}">
+                                                <button type="submit" class="text-green-500">
+                                                    <x-fas-cart-plus class="w-5 h-5 float-right" />
+                                                </button>
+                                            </form> --}}
+
+                                        </div>
+                                    @endforeach
                                 </div>
                             @endforeach
                         </div>
