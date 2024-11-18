@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('product_variations', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('productId')->constrained('product')->onDelete('cascade');
-            $table->foreignID('variationsId')->constrained('variations')->onDelete('cascade');
+            $table->foreignId('productId')->constrained('products')->onDelete('cascade');
+            $table->foreignID('variationId')->constrained('variations')->onDelete('cascade');
             $table->string('name');
             $table->timestamps();
         });

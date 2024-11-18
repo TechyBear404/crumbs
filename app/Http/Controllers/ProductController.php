@@ -6,8 +6,12 @@ use App\Models\Category;
 use App\Models\Ingredient;
 use App\Models\Product;
 use App\Models\ProductIngredient;
+use App\Models\ProductVariations;
+use App\Models\Variation;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rule;
 
 class ProductController extends Controller
 {
@@ -64,12 +68,14 @@ class ProductController extends Controller
 
         $validatedData = $request->validate([
             'name' => 'required|string|max:255|unique:App\Models\Product,name',
-            'description' => 'nullable | string | max:255',
-            'categoryId' => 'required | integer',
-            'ingredientsList' => 'required | array',
+            'description' => 'nullable|string|max:255',
+            'categoryId' => 'required|integer',
+            'ingredientsList' => 'required|array',
             'status' => 'required|in:available,unavailable',
+            'variations' => 'required|array',
+            'variations.*.size' => 'required|string|in:normal,large',
+            'variations.*.price' => 'required|numeric|min:0',
         ]);
-
 
         $product = Product::create([
             'name' => $validatedData['name'],
@@ -78,10 +84,27 @@ class ProductController extends Controller
             'status' => $validatedData['status'],
         ]);
 
+        // Create product ingredients
         foreach ($validatedData['ingredientsList'] as $ingredientId) {
             ProductIngredient::create([
                 'ingredientId' => $ingredientId,
                 'productId' => $product->id,
+            ]);
+        }
+
+        $variationId = Variation::where('type', 'size')->first()->id;
+
+        foreach ($validatedData['variations'] as $variation) {
+            $productVariation = ProductVariations::create([
+                'productId' => $product->id,
+                'variationId' => $variationId,
+                'name' => $variation['size']
+            ]);
+
+            $productVariation->prices()->create([
+                'productVariationId' => $productVariation->id,
+                'startDate' => Carbon::now(),
+                'price' => $variation['price']
             ]);
         }
 
@@ -110,6 +133,10 @@ class ProductController extends Controller
         $categories = Category::orderBy('name')->get();
         $ingredients = Ingredient::orderBy('name')->get();
 
+        foreach ($product->variations as $variation) {
+            $variation->price = $variation->prices->where('endDate', null)->first()->price;
+        }
+
         return view('product.edit', ['product' => $product, 'categories' => $categories, 'ingredients' => $ingredients]);
     }
 
@@ -120,15 +147,21 @@ class ProductController extends Controller
     {
         Gate::authorize('update', Product::class);
 
+
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
-            'description' => 'nullable | string | max:255',
-            'categoryId' => 'required | integer',
-            'ingredientsList' => 'required | array',
+            'description' => 'nullable|string|max:255',
+            'categoryId' => 'required|integer',
+            'ingredientsList' => 'required|array',
             'status' => 'required|in:available,unavailable',
+            'variations' => 'required|array',
+            'variations.*.size' => 'required|string|in:normal,large|unique:App\Models\ProductVariations,name',
+            'variations.*.price' => 'required|numeric|min:0',
         ]);
 
         $product = Product::findOrFail($id);
+
+        dd($product->variations);
 
         $product->update([
             'name' => $validatedData['name'],
@@ -137,13 +170,53 @@ class ProductController extends Controller
             'status' => $validatedData['status'],
         ]);
 
-        ProductIngredient::where('prodId', $id)->delete();
 
-        // $ingredients = [];
+        // Update ingredients
+        ProductIngredient::where('productId', $id)->delete();
         foreach ($validatedData['ingredientsList'] as $ingredientId) {
             ProductIngredient::create([
                 'ingredientId' => $ingredientId,
                 'productId' => $product->id,
+            ]);
+        }
+
+        $variationId = Variation::where('type', 'size')->first()->id;
+        // Update variations and prices
+        foreach ($validatedData['variations'] as $variation) {
+            // edit or add new variation and price if not exists
+            $productVariation = ProductVariations::upsert(
+                [
+                    'productId' => $product->id,
+                    'variationId' => $variationId,
+                    'name' => $variation['size']
+                ],
+                [
+                    'productId' => $product->id,
+                    'variationId' => $variationId,
+                    'name' => $variation['size']
+                ]
+            );
+
+
+            // $productVariation = ProductVariations::where('productId', $product->id)
+            //     ->where('variationId', $variationId)
+            //     ->where('name', $variation['size'])
+            //     ->first();
+
+            // if there is price for this  variation with no end date, update the end date
+            if ($productVariation->prices()->where('endDate', null)->exists()) {
+                $productVariation->prices()->where('endDate', null)->update([
+                    'endDate' => Carbon::now()
+                ]);
+            }
+            // $productVariation->prices()->where('endDate', null)->update([
+            //     'endDate' => Carbon::now()
+            // ]);
+
+
+            $productVariation->prices()->create([
+                'startDate' => Carbon::now(),
+                'price' => $variation['price']
             ]);
         }
 

@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('productVariationId')->constrained('product_variations')->onDelete('cascade');
             $table->decimal('price', 10, 2);
             $table->dateTime('startDate');
-            $table->dateTime('endDate');
+            $table->dateTime('endDate')->nullable()->default(null);
             $table->timestamps();
         });
     }

@@ -16,35 +16,6 @@ class ProductSeeder extends Seeder
 
     public function run(): void
     {
-        // First create ingredients
-        $ingredients = [
-            'Jambon',
-            'Fromage',
-            'Œuf',
-            'Américain préparé',
-            'Bacon',
-            'Fromage de chèvre',
-            'Miel',
-            'Thym',
-            'Tomates',
-            'Roquette',
-            'Mozzarella',
-            'Parmesan',
-            'Brie',
-            'Saumon fumé',
-            'Oignons frais',
-            'Sauce miel-moutarde',
-            'Aneth',
-            'Crudités',
-            'Sauce moutarde',
-            'Tomates séchées',
-            'Carpaccio de bœuf'
-        ];
-
-        foreach ($ingredients as $ingredientName) {
-            Ingredient::create(['name' => $ingredientName]);
-        }
-
         // Create categories
         $categories = [
             'Boissons froides',
@@ -71,7 +42,7 @@ class ProductSeeder extends Seeder
             Product::create([
                 'name' => $boisson['name'],
                 'price' => $boisson['price'],
-                'categoryId' => $categoryBoissonsFroides->id
+                'catid' => $categoryBoissonsFroides->id
             ]);
         }
 
@@ -87,7 +58,7 @@ class ProductSeeder extends Seeder
             Product::create([
                 'name' => $boisson['name'],
                 'price' => $boisson['price'],
-                'categoryId' => $categoryBoissonsChaud->id
+                'catid' => $categoryBoissonsChaud->id
             ]);
         }
 
@@ -104,37 +75,8 @@ class ProductSeeder extends Seeder
                 'name' => $sandwich['name'],
                 'price_normal' => $sandwich['price_normal'],
                 'price_grand' => $sandwich['price_grand'],
-                'categoryId' => $categorySandwichesClassiques->id
+                'catid' => $categorySandwichesClassiques->id
             ]);
-        }
-
-        // For Sandwiches Créatifs
-        $categorySandwichesCreatifs = Category::where('name', 'Sandwiches Créatifs')->first();
-        $sandwichesCreatifs = [
-            [
-                'name' => 'CLUB Maison',
-                'price' => 4.50,
-                'ingredients' => ['Jambon', 'Fromage', 'Crudités', 'Œuf']
-            ],
-            [
-                'name' => 'Le Chèvre',
-                'price' => 4.50,
-                'ingredients' => ['Fromage de chèvre', 'Bacon', 'Miel', 'Thym']
-            ],
-            // Add more sandwiches as needed
-        ];
-
-        foreach ($sandwichesCreatifs as $sandwich) {
-            $product = Product::create([
-                'name' => $sandwich['name'],
-                'price' => $sandwich['price'],
-                'categoryId' => $categorySandwichesCreatifs->id
-            ]);
-
-            // Attach ingredients
-            $ingredientIds = Ingredient::whereIn('name', $sandwich['ingredients'])
-                ->pluck('id');
-            $product->ingredients()->attach($ingredientIds);
         }
 
         // Continue with other categories...
