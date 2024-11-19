@@ -1,11 +1,11 @@
 <x-app-layout>
-    <div class="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="container px-4 py-8 mx-auto max-w-7xl sm:px-6 lg:px-8">
         <a href="{{ route('products.index') }}" class="text-blue-500 hover:text-blue-400">← Back</a>
-        <div class="bg-white shadow-md rounded-lg overflow-hidden p-6 mt-4">
-            <h2 class="text-lg font-semibold mb-2">{{ $product->name }}</h2>
-            <p class="text-gray-700 mb-2"><strong>Statut:</strong> {{ $product->status }}</p>
-            <p class="text-gray-700 mb-2"><strong>Catégorie:</strong> {{ $product->category->name }}</p>
-            <p class="text-gray-700 mb-2"><strong>Description:</strong> {{ $product->description }}</p>
+        <div class="p-6 mt-4 overflow-hidden bg-white rounded-lg shadow-md">
+            <h2 class="mb-2 text-lg font-semibold">{{ $product->name }}</h2>
+            <p class="mb-2 text-gray-700"><strong>Statut:</strong> {{ $product->status }}</p>
+            <p class="mb-2 text-gray-700"><strong>Catégorie:</strong> {{ $product->category->name }}</p>
+            <p class="mb-2 text-gray-700"><strong>Description:</strong> {{ $product->description }}</p>
             <div class="flex flex-wrap gap-2">
                 @foreach ($product->ingredients as $ingredient)
                     <span

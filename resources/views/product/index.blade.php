@@ -1,24 +1,24 @@
 <x-app-layout>
 
-    <div class="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="container px-4 py-8 mx-auto max-w-7xl sm:px-6 lg:px-8">
         <x-slot name="header">
-            <div class="flex gap-2 items-center">
-                <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            <div class="flex items-center gap-2">
+                <h2 class="text-xl font-semibold leading-tight text-gray-800">
                     Liste des Produits
                 </h2>
                 @if (Auth::user()->role == 'admin' || Auth::user()->role == 'manager')
-                    <a href="{{ route('products.create') }}" class="text-blue-500 text-xl"><x-fas-plus
+                    <a href="{{ route('products.create') }}" class="text-xl text-blue-500"><x-fas-plus
                             class="w-5 h-5" /></a>
                 @endif
-                <button id="toggleViewButton" class="ml-auto bg-blue-500 text-white px-4 py-2"
+                <button id="toggleViewButton" class="px-4 py-2 ml-auto text-white bg-blue-500"
                     onclick="toggleView()">Switch to
                     Table View</button>
             </div>
         </x-slot>
-        {{-- <h1 class="text-2xl font-bold mb-6">Liste des Produits</h1> --}}
+        {{-- <h1 class="mb-6 text-2xl font-bold">Liste des Produits</h1> --}}
 
         <div class="flex gap-4 min-h-[calc(100vh-14rem)]">
-            <div class="min-w-60 bg-white shadow-md rounded-lg overflow-hidden p-6 sticky top-8">
+            <div class="sticky p-6 overflow-hidden bg-white rounded-lg shadow-md min-w-60 top-8">
                 {{-- create filters for products --}}
                 <form id="filterForm" action="{{ route('products.index') }}" method="GET">
                     <div class="mb-4">
@@ -39,8 +39,8 @@
                     </div>
 
                     <div class="flex gap-2 pt-4">
-                        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Filtrer</button>
-                        <button type="button" class="bg-red-500 text-white px-4 py-2 rounded">
+                        <button type="submit" class="px-4 py-2 text-white bg-blue-500 rounded">Filtrer</button>
+                        <button type="button" class="px-4 py-2 text-white bg-red-500 rounded">
                             <a href="{{ route('products.index') }}">Réinitialiser</a>
                         </button>
                     </div>
@@ -52,19 +52,19 @@
                         <thead>
                             <tr>
                                 <th class="border-b border-gray-200"></th>
-                                <th class="py-2 px-4 border-b border-gray-200">Nom</th>
-                                <th class="py-2 px-4 border-b border-gray-200">Catégorie</th>
-                                <th class="py-2 px-4 border-b border-gray-200">Description</th>
-                                <th class="py-2 px-4 border-b border-gray-200">Ingrédients</th>
+                                <th class="px-4 py-2 border-b border-gray-200">Nom</th>
+                                <th class="px-4 py-2 border-b border-gray-200">Catégorie</th>
+                                <th class="px-4 py-2 border-b border-gray-200">Description</th>
+                                <th class="px-4 py-2 border-b border-gray-200">Ingrédients</th>
                                 @if (Auth::user()->role == 'admin' || Auth::user()->role == 'manager')
-                                    <th class="py-2 px-4 border-b border-gray-200">Actions</th>
+                                    <th class="px-4 py-2 border-b border-gray-200">Actions</th>
                                 @endif
                             </tr>
                         </thead>
                         <tbody>
                             @if ($products->isEmpty())
                                 <tr>
-                                    <td colspan="6" class="text-center py-4">Aucun produit trouvé</td>
+                                    <td colspan="6" class="py-4 text-center">Aucun produit trouvé</td>
                                 </tr>
                             @endif
                             @foreach ($products as $product)
@@ -72,24 +72,24 @@
                                     onclick="window.location='{{ route('products.show', $product->id) }}'">
                                     <td class="border-b border-gray-200">
                                         @if ($product->status == 'unavailable')
-                                            <x-fas-circle-exclamation class="text-red-500 h-5 w-5 ml-2"
+                                            <x-fas-circle-exclamation class="w-5 h-5 ml-2 text-red-500"
                                                 title="Indisponible" />
                                         @endif
 
                                     </td>
-                                    <td class="py-2 px-4 border-b border-gray-200 font-semibold">
+                                    <td class="px-4 py-2 font-semibold border-b border-gray-200">
                                         {{ $product->name }}
                                     </td>
-                                    <td class="py-2 px-4 border-b border-gray-200">{{ $product->category->name }}</td>
-                                    <td class="py-2 px-4 border-b border-gray-200">{{ $product->description }}</td>
-                                    <td class="py-2 px-4 border-b border-gray-200">
+                                    <td class="px-4 py-2 border-b border-gray-200">{{ $product->category->name }}</td>
+                                    <td class="px-4 py-2 border-b border-gray-200">{{ $product->description }}</td>
+                                    <td class="px-4 py-2 border-b border-gray-200">
                                         @foreach ($product->ingredients as $ingredient)
                                             <span class="py-0.5 text-sm font-medium">{{ $ingredient->name }},</span>
                                         @endforeach
                                     </td>
                                     @if (Auth::user()->role == 'admin' || Auth::user()->role == 'manager')
-                                        <td class="py-2 px-4 border-b border-gray-200 ">
-                                            <div class="flex gap-1 h-full">
+                                        <td class="px-4 py-2 border-b border-gray-200 ">
+                                            <div class="flex h-full gap-1">
 
                                                 <a href="{{ route('products.edit', $product->id) }}"
                                                     class="text-orange-400">
@@ -121,12 +121,12 @@
                         <div class="flex gap-1">
                             @foreach ($products as $product)
                                 <div class="bg-white shadow-md rounded-lg p-4 mr-0.5 cursor-pointer hover:bg-gray-100 h-40 basis-1/4"
-                                    onclick="window.location='{{ route('products.show', $product->id) }}'">
+                                    {{-- onclick="window.location='{{ route('products.show', $product->id) }}'"> --}}>
 
-                                    <div class="flex mb-2 justify-between">
-                                        <div class="flex items-center mb-2 gap-2">
+                                    <div class="flex justify-between mb-2">
+                                        <div class="flex items-center gap-2 mb-2">
                                             @if ($product->status == 'unavailable')
-                                                <x-fas-circle-exclamation class="text-red-500 h-5 w-5"
+                                                <x-fas-circle-exclamation class="w-5 h-5 text-red-500"
                                                     title="Indisponible" />
                                             @endif
                                             <h2 class="text-xl font-bold">{{ $product->name }}</h2>
@@ -153,7 +153,11 @@
                                             <span class="py-0.5 text-sm font-medium">{{ $ingredient->name }},</span>
                                         @endforeach
                                     </div>
-                                    @foreach ($product->variations as $variation)
+                                    <button x-data x-on:click="$dispatch('open-modal', 'modal-name')">
+                                        <x-fas-cart-plus class="w-5 h-5 text-green-500" />
+                                    </button>
+
+                                    {{-- @foreach ($product->variations as $variation)
                                         <div class="grid grid-cols-3">
                                             <div class="text-sm font-medium">
                                                 {{ $variation->name }}
@@ -162,42 +166,11 @@
                                                 {{ $variation->prices->where('endDate', null)->first()->price }}
                                                 €
                                             </div>
-                                            <button onclick="$dispatch('open-modal', 'modal-name')">Open Modal</button>
-
-                                            {{-- Modal component --}}
-                                            <x-modal name="modal-name" :show="$errors->isNotEmpty()" maxWidth="md">
-                                                {{-- Modal content --}}
-                                                <div class="p-6">
-                                                    <h2 class="text-lg font-medium">Modal Title</h2>
-
-                                                    <div class="mt-4">
-                                                        Modal content goes here
-                                                    </div>
-
-                                                    <div class="mt-6 flex justify-end">
-                                                        <x-secondary-button onclick="$dispatch('close')">
-                                                            Cancel
-                                                        </x-secondary-button>
-
-                                                        <x-primary-button class="ml-3">
-                                                            Confirm
-                                                        </x-primary-button>
-                                                    </div>
-                                                </div>
-                                            </x-modal>
-                                            {{-- add product to cart button --}}
-                                            {{-- <form action="{{ route('orders.store') }}" method="POST">
-                                                @csrf
-                                                <input type="hidden" name="productId" value="{{ $product->id }}">
-                                                <input type="hidden" name="productVariationId"
-                                                    value="{{ $variation->id }}">
-                                                <button type="submit" class="text-green-500">
-                                                    <x-fas-cart-plus class="w-5 h-5 float-right" />
-                                                </button>
-                                            </form> --}}
-
                                         </div>
-                                    @endforeach
+                                    @endforeach --}}
+                                    {{-- Modal component --}}
+                                    <x-product-order-modal name="modal-name" :show="false" maxWidth="md"
+                                        :product="$product" />
                                 </div>
                             @endforeach
                         </div>
@@ -206,7 +179,6 @@
             </div>
         </div>
     </div>
-
 
     <script>
         function toggleView() {

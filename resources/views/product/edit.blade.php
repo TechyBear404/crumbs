@@ -1,9 +1,9 @@
 <x-app-layout>
-    <div class="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 class="text-2xl font-bold mb-6">Modifier le produit</h1>
+    <div class="container px-4 py-8 mx-auto max-w-7xl sm:px-6 lg:px-8">
+        <h1 class="mb-6 text-2xl font-bold">Modifier le produit</h1>
 
         <form action="{{ route('products.update', $product->id) }}" method="POST"
-            class="bg-white rounded overflow-hidden p-4 border border-gray-200">
+            class="p-4 overflow-hidden bg-white border border-gray-200 rounded">
             @csrf
             @method('PUT')
             <div class="mb-4">
@@ -17,7 +17,7 @@
                 <x-input-error :messages="$errors->get('description')" />
             </div>
             <div class="mb-4">
-                <div class="flex gap-2 items-center">
+                <div class="flex items-center gap-2">
                     <x-input-label name="categoryId" value="Catégorie" />
                     <a href="{{ route('categories.create', ['redirect_url' => route('products.create')]) }}"
                         class="text-blue-500 ">+</a>
@@ -26,21 +26,21 @@
                 <x-input-error :messages="$errors->get('categoryId')" />
             </div>
             <div class="mb-4">
-                <div class="flex gap-2 items-center">
+                <div class="flex items-center gap-2">
                     <x-input-label name="status" value="Ingrédients" />
                     <a href="{{ route('ingredients.create', ['redirect_url' => route('products.edit', ['product' => $product->id])]) }}"
                         class="text-blue-500 ">+</a>
                 </div>
-                <div class="flex gap-2 items-center mb-2">
+                <div class="flex items-center gap-2 mb-2">
                     <x-input-select-dynamic id="ingredientSelect" name="status" :options="$ingredients" />
-                    <button type="button" class="bg-blue-500 text-white px-4 py-2 rounded"
+                    <button type="button" class="px-4 py-2 text-white bg-blue-500 rounded"
                         onclick="addIngredient()">+</button>
                 </div>
                 <div id="ingredientList" class="flex flex-wrap gap-2">
                     @foreach ($product->ingredients as $ingredient)
-                        <div class="bg-blue-600 rounded text-gray-100 px-2 py-1 flex items-center">
+                        <div class="flex items-center px-2 py-1 text-gray-100 bg-blue-600 rounded">
                             <span>{{ $ingredient->name }}</span>
-                            <button type="button" class="text-gray-100 ml-2 hover:text-red-500"
+                            <button type="button" class="ml-2 text-gray-100 hover:text-red-500"
                                 onclick="removeIngredient({{ $ingredient->id }})">X</button>
                             <input type="hidden" name="ingredientsList[]" value="{{ $ingredient->id }}">
                         </div>
@@ -53,16 +53,16 @@
                 <x-input-select name="status" :options="['available' => 'Disponible', 'unavailable' => 'Indisponible']" :selected="$product->status" />
                 <x-input-error :messages="$errors->get('status')" />
             </div>
-            <div class="mb-4 flex flex-col">
-                <div class="flex gap-2 items-center mb-2">
+            <div class="flex flex-col mb-4">
+                <div class="flex items-center gap-2 mb-2">
                     <x-input-label name="prices" value="Prix" class="" />
-                    <button type="button" class="text-blue-500 text-xl" onclick="addPrice()">
+                    <button type="button" class="text-xl text-blue-500" onclick="addPrice()">
                         +
                     </button>
                 </div>
                 <div id="pricesList" class="flex flex-col gap-2">
                     @foreach ($product->variations as $index => $variation)
-                        <div class="price-entry flex gap-2">
+                        <div class="flex gap-2 price-entry">
                             <div>
                                 <x-input-label name="size" value="Taille" class="mb-1" />
                                 <x-input-select name="variations[{{ $index }}][size]" :options="['normal' => 'Normal', 'large' => 'Grand']"
@@ -82,8 +82,8 @@
                 </div>
             </div>
             <div class="flex gap-2 pt-4">
-                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Mettre à jour</button>
-                <button type="button" class="bg-red-500 text-white px-4 py-2 rounded">
+                <button type="submit" class="px-4 py-2 text-white bg-blue-500 rounded">Mettre à jour</button>
+                <button type="button" class="px-4 py-2 text-white bg-red-500 rounded">
                     <a href="{{ url()->previous() }}">Annuler</a>
                 </button>
             </div>
@@ -104,7 +104,7 @@
             newIngredientDiv.className = 'bg-blue-600 rounded text-gray-100 px-2 py-1 flex items-center';
             newIngredientDiv.innerHTML = `
                 <span>${selectedIngredient.text}</span>
-                <button type="button" class="text-gray-100 ml-2 hover:text-red-500" onclick="removeIngredient(${selectedIngredientId})">X</button>
+                <button type="button" class="ml-2 text-gray-100 hover:text-red-500" onclick="removeIngredient(${selectedIngredientId})">X</button>
                 <input type="hidden" name="ingredientsList[]" value="${selectedIngredientId}">
             `;
             ingredientListDiv.appendChild(newIngredientDiv);

@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ProductVariations;
 use App\Models\User;
-use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
 class OrderController extends Controller
@@ -30,31 +31,40 @@ class OrderController extends Controller
     public function store(Request $request, User $user)
     {
 
-        dd($request->all());
+        // dd($request->all());
         $validatedData = $request->validate([
-            // 'orderDate' => 'required|date',
-            'details' => 'required|array',
-            'details.*.productVariationId' => 'required|exists:product_variations,id',
-            // 'details.*.qty' => 'required|integer|min:1',
-            'details.*.comment' => 'nullable|string',
-            'details.*.unitPrice' => 'required|numeric|min:0',
+            'productId' => 'required|integer',
+            'variantId' => 'required|integer',
+            'qty' => 'required|integer|min:0',
+            'orderDate' => 'required|date',
+            'comment' => 'nullable|string',
         ]);
 
-        // dd($validatedData);
 
-        $user = User::find($user->id);
+        // get logged in user
+        $user = User::find(Auth::id());
 
-        $order = $user->orders()->create($validatedData);
+        $order = $user->orders()->where('orderDate', $validatedData['orderDate'])->first();
+        if (!$order) {
+            $order = $user->orders()->create([
+                'userId' => $user->id,
+                'orderDate' => $validatedData['orderDate'],
+            ]);
+        }
 
+        $unitPrice = ProductVariations::find($validatedData['variantId'])->prices()->where('endDate', null)->first()->price;
+
+        // dd($unitPrice);
         $order->details()->create([
             'orderId' => $order->id,
-            'orderDate' => Carbon::now(),
-            'productVariationId' => $validatedData['details'][0]['productVariationId'],
-            // 'qty' => $validatedData['details'][0]['qty'],
-            'qty' => 1,
-            'comment' => $validatedData['details'][0]['comment'],
-            'unitPrice' => $validatedData['details'][0]['unitPrice'],
+            'productVariationId' => $validatedData['variantId'],
+            'qty' => $validatedData['qty'],
+            'orderDate' => $validatedData['orderDate'],
+            'comment' => $validatedData['comment'],
+            'unitPrice' => $unitPrice,
         ]);
+
+        return redirect()->route('products.index');
     }
 
     /**
