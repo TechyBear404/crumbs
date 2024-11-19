@@ -74,7 +74,7 @@
                 @if (count($product->variations) > 1)
                     {{-- <x-input-select-dynamic name="variantId" :options="$product->variations" /> --}}
                     <select name="variantId"
-                        class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200">
+                        class="w-full shadow-sm border-gray-300rounded-md focus:border-blue-300 focus:ring focus:ring-blue-200">
                         @foreach ($product->variations as $variation)
                             <option value="{{ $variation->id }}">{{ $variation->name }} -
                                 {{ $variation->prices->where('endDate', null)->first()->price }}€</option>

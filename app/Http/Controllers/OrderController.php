@@ -64,7 +64,7 @@ class OrderController extends Controller
             'unitPrice' => $unitPrice,
         ]);
 
-        return redirect()->route('products.index');
+        return redirect()->back()->with('success', 'Commande créée avec succès');
     }
 
     /**
