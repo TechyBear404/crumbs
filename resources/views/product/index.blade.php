@@ -1,176 +1,193 @@
 <x-app-layout>
-
+    <x-cart :orders="$orders" />
     <div class="container px-4 py-8 mx-auto max-w-7xl sm:px-6 lg:px-8">
         <x-slot name="header">
-            <div class="flex items-center gap-2">
-                <h2 class="text-xl font-semibold leading-tight text-gray-800">
-                    Liste des Produits
-                </h2>
-                @if (Auth::user()->role == 'admin' || Auth::user()->role == 'manager')
-                    <a href="{{ route('products.create') }}" class="text-xl text-blue-500"><x-fas-plus
-                            class="w-5 h-5" /></a>
-                @endif
-                <button id="toggleViewButton" class="px-4 py-2 ml-auto text-white bg-blue-500"
-                    onclick="toggleView()">Switch to
-                    Table View</button>
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <button id="filterButton"
+                        class="px-4 py-2 text-white transition-colors duration-200 bg-gray-500 rounded-lg md:hidden hover:bg-gray-600 focus:ring-2 focus:ring-gray-300"
+                        x-data=""
+                        x-on:click="$dispatch('toggle-filter')">
+                        <x-fas-filter class="w-4 h-4" />
+                    </button>
+                    <h2 class="text-2xl font-bold leading-tight text-gray-800">
+                        Liste des Produits
+                    </h2>
+                    @if (Auth::user()->role == 'admin' || Auth::user()->role == 'manager')
+                        <a href="{{ route('products.create') }}"
+                            class="text-blue-500 transition-colors duration-200 hover:text-blue-600">
+                            <x-fas-plus class="w-6 h-6" />
+                        </a>
+                    @endif
+                </div>
+                <div class="flex items-center gap-3">
+                    <button id="toggleViewButton"
+                        class="px-4 py-2 text-white transition-colors duration-200 bg-blue-500 rounded-lg hover:bg-blue-600 focus:ring-2 focus:ring-blue-300"
+                        onclick="toggleView()">
+                        >
+                        Switch to Table View
+                    </button>
+                </div>
             </div>
         </x-slot>
-        {{-- <h1 class="mb-6 text-2xl font-bold">Liste des Produits</h1> --}}
 
-        <div class="flex gap-4 min-h-[calc(100vh-14rem)]">
-            <div class="sticky p-6 overflow-hidden bg-white rounded-lg shadow-md min-w-60 top-8">
-                {{-- create filters for products --}}
-                <form id="filterForm" action="{{ route('products.index') }}" method="GET">
-                    <div class="mb-4">
-                        <x-input-label name="name" value="Nom" class="mb-1" />
-                        <x-text-input id="filterName" name="name" :value="old('name', request('name'))" />
+        <div class="flex gap-6 min-h-[calc(100vh-14rem)]">
+            <x-product.filter :categories="$categories" />
 
-                    </div>
-                    <div class="mb-4">
-                        @foreach ($categories as $categorie)
-                            <div>
-                                <input type="checkbox" name="categoryId[]" value="{{ $categorie->id }}"
-                                    {{ in_array($categorie->id, request('categoryId', [])) ? 'checked' : '' }} />
-                                <span>{{ $categorie->name }}</span>
-                            </div>
-                        @endforeach
-                        {{-- <x-input-label name="categoryId" value="Catégorie" class="mb-1" />
-                        <x-input-select-dynamic name="categoryId" :options="$categories" :selected="request('categoryId')" /> --}}
-                    </div>
-
-                    <div class="flex gap-2 pt-4">
-                        <button type="submit" class="px-4 py-2 text-white bg-blue-500 rounded">Filtrer</button>
-                        <button type="button" class="px-4 py-2 text-white bg-red-500 rounded">
-                            <a href="{{ route('products.index') }}">Réinitialiser</a>
-                        </button>
-                    </div>
-                </form>
-            </div>
+            <!-- Content Area -->
             <div class="w-full">
+                <!-- Table View -->
                 <div id="tableView" class="hidden">
-                    <table class="min-w-full bg-white rounded-lg">
-                        <thead>
-                            <tr>
-                                <th class="border-b border-gray-200"></th>
-                                <th class="px-4 py-2 border-b border-gray-200">Nom</th>
-                                <th class="px-4 py-2 border-b border-gray-200">Catégorie</th>
-                                <th class="px-4 py-2 border-b border-gray-200">Description</th>
-                                <th class="px-4 py-2 border-b border-gray-200">Ingrédients</th>
-                                @if (Auth::user()->role == 'admin' || Auth::user()->role == 'manager')
-                                    <th class="px-4 py-2 border-b border-gray-200">Actions</th>
-                                @endif
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @if ($products->isEmpty())
+                    <div class="overflow-hidden bg-white/90 backdrop-blur-sm rounded-xl border border-gray-100/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50/50">
                                 <tr>
-                                    <td colspan="6" class="py-4 text-center">Aucun produit trouvé</td>
-                                </tr>
-                            @endif
-                            @foreach ($products as $product)
-                                <tr class="cursor-pointer hover:bg-gray-100"
-                                    onclick="window.location='{{ route('products.show', $product->id) }}'">
-                                    <td class="border-b border-gray-200">
-                                        @if ($product->status == 'unavailable')
-                                            <x-fas-circle-exclamation class="w-5 h-5 ml-2 text-red-500"
-                                                title="Indisponible" />
-                                        @endif
-
-                                    </td>
-                                    <td class="px-4 py-2 font-semibold border-b border-gray-200">
-                                        {{ $product->name }}
-                                    </td>
-                                    <td class="px-4 py-2 border-b border-gray-200">{{ $product->category->name }}</td>
-                                    <td class="px-4 py-2 border-b border-gray-200">{{ $product->description }}</td>
-                                    <td class="px-4 py-2 border-b border-gray-200">
-                                        @foreach ($product->ingredients as $ingredient)
-                                            <span class="py-0.5 text-sm font-medium">{{ $ingredient->name }},</span>
-                                        @endforeach
-                                    </td>
+                                    <th scope="col" class="w-12"></th>
+                                    <th scope="col" class="px-6 py-4 text-xs font-semibold tracking-wider text-left text-gray-500 uppercase">
+                                        Nom
+                                    </th>
+                                    <th scope="col" class="px-6 py-4 text-xs font-semibold tracking-wider text-left text-gray-500 uppercase">
+                                        Catégorie
+                                    </th>
+                                    <th scope="col" class="px-6 py-4 text-xs font-semibold tracking-wider text-left text-gray-500 uppercase">
+                                        Description
+                                    </th>
+                                    <th scope="col" class="px-6 py-4 text-xs font-semibold tracking-wider text-left text-gray-500 uppercase">
+                                        Ingrédients
+                                    </th>
                                     @if (Auth::user()->role == 'admin' || Auth::user()->role == 'manager')
-                                        <td class="px-4 py-2 border-b border-gray-200 ">
-                                            <div class="flex h-full gap-1">
-
-                                                <a href="{{ route('products.edit', $product->id) }}"
-                                                    class="text-orange-400">
-                                                    <x-fas-edit class="w-5 h-5" title="Editer le produit" />
-                                                </a>
-                                                <form action="{{ route('products.destroy', $product->id) }}"
-                                                    method="POST">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="text-red-500">
-                                                        <x-fas-trash-alt class="w-5 h-5" title="Supprimer le produit" />
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        </td>
+                                        <th scope="col" class="px-6 py-4 text-xs font-semibold tracking-wider text-left text-gray-500 uppercase">
+                                            Actions
+                                        </th>
                                     @endif
                                 </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200 bg-white/50">
+                                @if ($products->isEmpty())
+                                    <tr>
+                                        <td colspan="6" class="px-6 py-8 text-center text-gray-500">
+                                            Aucun produit trouvé
+                                        </td>
+                                    </tr>
+                                @endif
+                                @foreach ($products as $product)
+                                    <tr class="transition-colors group hover:bg-gray-50/50"
+                                        onclick="window.location='{{ route('products.show', $product->id) }}'">
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            @if ($product->status == 'unavailable')
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                                    <x-fas-circle-exclamation class="w-3 h-3 mr-1" />
+                                                    Indisponible
+                                                </span>
+                                            @endif
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm font-medium text-gray-900">{{ $product->name }}</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm text-gray-600">{{ $product->category->name }}</div>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <div class="text-sm text-gray-600 line-clamp-2">{{ $product->description }}</div>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <div class="flex flex-wrap gap-1">
+                                                @foreach ($product->ingredients as $ingredient)
+                                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
+                                                        {{ $ingredient->name }}
+                                                    </span>
+                                                @endforeach
+                                            </div>
+                                        </td>
+                                        @if (Auth::user()->role == 'admin' || Auth::user()->role == 'manager')
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="flex items-center gap-2">
+                                                    <button type="button"
+                                                        x-on:click="$dispatch('open-modal', 'modal-product-{{ $product->id }}')"
+                                                        class="inline-flex items-center p-1.5 text-green-600 rounded-lg bg-green-50 hover:bg-green-100 transition-colors duration-200">
+                                                        <x-fas-cart-plus class="w-4 h-4" />
+                                                    </button>
+                                                    <a href="{{ route('products.edit', $product->id) }}"
+                                                        class="inline-flex items-center p-1.5 text-orange-500 rounded-lg bg-orange-50 hover:bg-orange-100 transition-colors duration-200">
+                                                        <x-fas-edit class="w-4 h-4" />
+                                                    </a>
+                                                    <form action="{{ route('products.destroy', $product->id) }}" method="POST" class="inline-flex">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit"
+                                                            class="inline-flex items-center p-1.5 text-red-600 rounded-lg bg-red-50 hover:bg-red-100 transition-colors duration-200">
+                                                            <x-fas-trash-alt class="w-4 h-4" />
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </td>
+                                        @endif
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
-                <div id="cardView" class="hidden grow">
+                <!-- Card View -->
+                <div id="cardView" class="hidden grow" x-data="{}">
                     @if ($products->isEmpty())
-                        <div class="text-center bg-white shadow-md rounded-lg p-4 mr-0.5 w-full">
-                            Aucun produit trouvé
+                        <div class="p-8 text-center shadow-md bg-white/90 backdrop-blur-sm rounded-xl">
+                            <p class="text-lg text-gray-600">Aucun produit trouvé</p>
                         </div>
                     @else
-                        <div class="flex gap-1">
+                        <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                             @foreach ($products as $product)
-                                <div class="bg-white shadow-md rounded-lg p-4 mr-0.5 cursor-pointer hover:bg-gray-100 h-40 basis-1/4"
-                                    {{-- onclick="window.location='{{ route('products.show', $product->id) }}'"> --}}>
+                                <div class="group relative bg-white rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] backdrop-blur-sm border border-gray-100/50 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                                    <!-- Status Badge -->
+                                    @if ($product->status == 'unavailable')
+                                        <div class="absolute px-3 py-1 rounded-full shadow-sm top-3 left-3 bg-red-500/90 backdrop-blur-sm">
+                                            <span class="text-xs font-medium text-white">Indisponible</span>
+                                        </div>
+                                    @endif
 
-                                    <div class="flex justify-between mb-2">
-                                        <div class="flex items-center gap-2 mb-2">
-                                            @if ($product->status == 'unavailable')
-                                                <x-fas-circle-exclamation class="w-5 h-5 text-red-500"
-                                                    title="Indisponible" />
-                                            @endif
-                                            <h2 class="text-xl font-bold">{{ $product->name }}</h2>
+                                    <!-- Admin Actions -->
+                                    @if (Auth::user()->role == 'admin' || Auth::user()->role == 'manager')
+                                        <div class="absolute flex flex-col justify-center transition-all duration-200 opacity-0 top-3 right-3 group-hover:opacity-100">
+                                            <a href="{{ route('products.edit', $product->id) }}"
+                                                class="p-1 text-orange-500 transition-colors duration-200 rounded shadow-sm bg-white/90 hover:bg-orange-50">
+                                                <x-fas-edit class="w-4 h-4" />
+                                            </a>
+                                            <form action="{{ route('products.destroy', $product->id) }}" method="POST">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit"
+                                                    class="p-1 text-red-500 transition-colors duration-200 rounded shadow-sm bg-white/90 hover:bg-red-50">
+                                                    <x-fas-trash-alt class="w-4 h-4" />
+                                                </button>
+                                            </form>
+                                        </div>
+                                    @endif
+
+                                    <div class="p-6 space-y-6">
+                                        <!-- Product Name -->
+                                        <div class="text-center">
+                                            <h2 class="mb-2 text-2xl font-bold text-gray-800">{{ $product->name }}</h2>
+                                            <p class="text-sm text-gray-500">{{ $product->category->name }}</p>
                                         </div>
 
-                                        @if (Auth::user()->role == 'admin' || Auth::user()->role == 'manager')
-                                            <div class="flex gap-1">
-                                                <a href="{{ route('products.edit', $product->id) }}"
-                                                    class="text-orange-400"><x-fas-edit class="w-5 h-5"
-                                                        title="Editer le produit" /></a>
-                                                <form action="{{ route('products.destroy', $product->id) }}"
-                                                    method="POST">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="text-red-500">
-                                                        <x-fas-trash-alt class="w-5 h-5" title="Supprimer le produit" />
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        @endif
-                                    </div>
-                                    <div class="pb-2">
-                                        @foreach ($product->ingredients as $ingredient)
-                                            <span class="py-0.5 text-sm font-medium">{{ $ingredient->name }},</span>
-                                        @endforeach
-                                    </div>
-                                    <button x-data x-on:click="$dispatch('open-modal', 'modal-name')">
-                                        <x-fas-cart-plus class="w-5 h-5 text-green-500" />
-                                    </button>
-
-                                    {{-- @foreach ($product->variations as $variation)
-                                        <div class="grid grid-cols-3">
-                                            <div class="text-sm font-medium">
-                                                {{ $variation->name }}
-                                            </div>
-                                            <div class="text-sm font-medium">
-                                                {{ $variation->prices->where('endDate', null)->first()->price }}
-                                                €
-                                            </div>
+                                        <!-- Ingredients -->
+                                        <div class="flex flex-wrap justify-center gap-2">
+                                            @foreach ($product->ingredients as $ingredient)
+                                                <span class="px-3 py-1 text-xs font-medium text-gray-600 border border-gray-100 rounded-full bg-gray-50">
+                                                    {{ $ingredient->name }}
+                                                </span>
+                                            @endforeach
                                         </div>
-                                    @endforeach --}}
-                                    {{-- Modal component --}}
-                                    <x-product-order-modal name="modal-name" :show="false" maxWidth="md"
-                                        :product="$product" />
+
+                                        <!-- Add to Cart Button -->
+                                        <button type="button"
+                                            x-on:click="$dispatch('open-modal', 'modal-product-{{ $product->id }}')"
+                                            class="flex items-center justify-center w-full gap-2 px-6 py-3 font-medium text-white transition-all duration-200 transform bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl hover:from-blue-600 hover:to-indigo-700 focus:ring-2 focus:ring-blue-300 focus:ring-offset-2">
+                                            <x-fas-cart-plus class="w-5 h-5" />
+                                            <span>Ajouter au panier</span>
+                                        </button>
+                                    </div>
                                 </div>
                             @endforeach
                         </div>
@@ -179,6 +196,11 @@
             </div>
         </div>
     </div>
+
+    <!-- Product Order Modals -->
+    @foreach ($products as $product)
+        <x-product-order-modal :name="'modal-product-'.$product->id" :product="$product" />
+    @endforeach
 
     <script>
         function toggleView() {
@@ -227,23 +249,7 @@
                 toggleButton.textContent = 'Switch to Card View';
                 localStorage.setItem('productsView', 'table');
             }
-            const filterForm = document.getElementById('filterForm');
-            const filterName = document.getElementById('filterName');
-            const categoryCheckboxes = document.querySelectorAll('input[name="categoryId[]"]');
 
-            // filterName.addEventListener('input', function() {
-            //     filterForm.submit();
-            // });
-
-            categoryCheckboxes.forEach(function(checkbox) {
-                checkbox.addEventListener('change', function() {
-                    filterForm.submit();
-                });
-            });
         });
-
-        function resetName() {
-            document.querySelector('#filterName').value = '';
-        }
     </script>
 </x-app-layout>

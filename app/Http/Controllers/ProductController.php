@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Ingredient;
+use App\Models\Order;
 use App\Models\Product;
 use App\Models\ProductIngredient;
 use App\Models\ProductVariations;
 use App\Models\Variation;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 
@@ -40,11 +42,13 @@ class ProductController extends Controller
             $query->whereIn('categoryId', $validatedData['categoryId']);
         }
 
-
+        $orders = Order::with(['details.productVariation.product'])
+            ->where('userId', Auth::id())
+            ->get();
         $categories = Category::orderBy('name')->get();
         $products = $query->paginate(10);
         // $products = Product::paginate(10);
-        return view('product.index', compact('products', 'categories'));
+        return view('product.index', compact('products', 'categories', 'orders'));
     }
 
     /**

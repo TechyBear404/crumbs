@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\IngredientController;
 use App\Http\Controllers\OrderController;
@@ -25,6 +26,12 @@ Route::middleware('auth')->group(function () {
     Route::resource('/ingredients', IngredientController::class);
     Route::resource('users', UserController::class);
     Route::resource('orders', OrderController::class);
+});
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/cart/items', [CartController::class, 'getCartItems']);
+    Route::post('/cart/items/{id}/quantity', [CartController::class, 'updateQuantity']);
+    Route::delete('/cart/items/{id}', [CartController::class, 'removeItem']);
 });
 
 require __DIR__ . '/auth.php';

@@ -31,7 +31,6 @@ class OrderController extends Controller
     public function store(Request $request, User $user)
     {
 
-        // dd($request->all());
         $validatedData = $request->validate([
             'productId' => 'required|integer',
             'variantId' => 'required|integer',
@@ -39,6 +38,7 @@ class OrderController extends Controller
             'orderDate' => 'required|date',
             'comment' => 'nullable|string',
         ]);
+        // dd($request->all());
 
 
         // get logged in user

@@ -12,6 +12,7 @@
 
 <div x-data="{
     show: @js($show),
+    quantity: 1,
     focusables() {
         // All focusable element types...
         let selector = 'a, button, input:not([type=\'hidden\']), textarea, select, details, [tabindex]:not([tabindex=\'-1\'])'
@@ -38,7 +39,8 @@
     x-on:keydown.escape.window="show = false" x-on:keydown.tab.prevent="$event.shiftKey || nextFocusable().focus()"
     x-on:keydown.shift.tab.prevent="prevFocusable().focus()" x-show="show"
     class="fixed inset-0 z-50 px-4 py-6 overflow-y-auto sm:px-0" style="display: {{ $show ? 'block' : 'none' }};">
-    <div x-show="show" class="fixed inset-0 transition-all transform" x-on:click="show = false"
+    <div x-show="show"
+        class="fixed inset-0 transition-all transform" x-on:click="show = false"
         x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0"
         x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200"
         x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
@@ -46,96 +48,112 @@
     </div>
 
     <div x-show="show"
-        class="mb-6 p-4 bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:w-full {{ $maxWidth }} sm:mx-auto"
-        x-transition:enter="ease-out duration-300"
-        x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-        x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200"
-        x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
-        x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
-        {{-- a component to be used as a modal for product order form need to select the size and quantity and orderDate via date picker --}}
-        <div class="">
-            {{-- add close button --}}
-            <div class="flex justify-between">
-                <h3 class="text-lg font-medium text-gray-900">Commande </h3>
-                <button x-on:click="show = false">
-                    <x-fas-xmark class="w-5 h-5" />
-                </button>
-            </div>
+        class="mb-6 bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:w-full {{ $maxWidth }} sm:mx-auto"
+        x-transition:enter="translate-x-0"
+        x-transition:enter-start="translate-x-full"
+        x-transition:leave-end="translate-x-full">
+
+        {{-- Header --}}
+        <div class="sticky top-0 z-10 flex items-center justify-between px-6 py-4 bg-white border-b">
+            <h3 class="text-lg font-bold text-gray-900">Ajouter au panier</h3>
+            <button @click="show = false" class="p-2 transition-colors rounded-full hover:bg-gray-100">
+                <x-fas-xmark class="w-5 h-5" />
+            </button>
         </div>
-        <form action="{{ route('orders.store') }}" method="POST" class="p-6">
+
+        <form action="{{ route('orders.store') }}" method="POST" class="flex flex-col h-full">
             @csrf
             <input type="hidden" name="productId" value="{{ $product->id }}">
 
-            <h2 class="mb-4 text-lg font-semibold">Commander {{ $product->name }}</h2>
+            {{-- Scrollable Content --}}
+            <div class="flex-1 p-6 space-y-8 overflow-y-auto">
+                {{-- Product Preview --}}
+                <div class="flex gap-6">
+                    @if($product->image)
+                        <div class="relative flex-shrink-0 w-40 h-40">
+                            <img src="{{ $product->image }}" alt="{{ $product->name }}"
+                                class="object-cover w-full h-full rounded-2xl">
+                        </div>
+                    @endif
+                    <div class="space-y-2">
+                        @if($product->category)
+                            <span class="inline-flex px-2.5 py-1 text-xs font-medium text-blue-700 bg-blue-50 rounded-full">
+                                {{ $product->category->name }}
+                            </span>
+                        @endif
+                        <h2 class="text-xl font-bold text-gray-900">{{ $product->name }}</h2>
+                        <p class="text-sm text-gray-500">{{ $product->description }}</p>
+                    </div>
+                </div>
 
-            <!-- Size Selection -->
-            <div class="mb-4">
-                <x-input-label name="variantId" value="Taille" class="mb-1" />
-                @if (count($product->variations) > 1)
-                    {{-- <x-input-select-dynamic name="variantId" :options="$product->variations" /> --}}
-                    <select name="variantId"
-                        class="w-full shadow-sm border-gray-300rounded-md focus:border-blue-300 focus:ring focus:ring-blue-200">
-                        @foreach ($product->variations as $variation)
-                            <option value="{{ $variation->id }}">{{ $variation->name }} -
-                                {{ $variation->prices->where('endDate', null)->first()->price }}€</option>
-                        @endforeach
-                    </select>
-                @else
-                    <p>
-                        {{ $product->variations->first()->name }} -
-                        {{ $product->variations->first()->prices->where('endDate', null)->first()->price }}€
-                    </p>
-                @endif
-            </div>
+                {{-- Size Selection --}}
+                    <div class="space-y-3">
+                        <label class="text-sm font-medium text-gray-900">Taille</label>
+                        <div class="grid grid-cols-3 gap-3" x-data="{ selectedVariant: '{{ $product->variations->first()->id }}' }">
+                            @foreach ($product->variations as $variation)
+                                <label class="relative">
+                                    <input type="radio" name="variantId" value="{{ $variation->id }}"
+                                        x-model="selectedVariant"
+                                        class="sr-only peer">
+                                    <div class="p-4 text-center transition-all border-2 cursor-pointer rounded-xl peer-checked:border-blue-500 peer-checked:bg-blue-50 hover:border-blue-200">
+                                        <span class="block text-sm font-medium">{{ $variation->name }}</span>
+                                        <span class="block mt-1 text-sm text-gray-500">
+                                            {{ $variation->prices->where('endDate', null)->first()->price }}€
+                                        </span>
+                                    </div>
+                                </label>
+                            @endforeach
+                        </div>
+                    </div>
 
-            <!-- Quantity Selection -->
-            <div class="mb-4">
-                <x-input-label name="qty" value="Quantité" class="mb-1" />
-                <div class="flex items-center">
-                    <button type="button" onclick="decrementQuantity()" class="px-3 py-1 border rounded-l">-</button>
-                    <input type="number" name="qty" value="1" min="1"
-                        class="w-20 text-center border-t border-b">
-                    <button type="button" onclick="incrementQuantity()" class="px-3 py-1 border rounded-r">+</button>
+                {{-- Quantity --}}
+                <div class="space-y-3">
+                    <label class="text-sm font-medium text-gray-900">Quantité</label>
+                    <div class="inline-flex items-center border rounded-lg">
+                        <button type="button" @click.prevent="quantity = Math.max(1, quantity - 1)"
+                            class="flex items-center justify-center w-12 h-12 text-gray-600 transition-colors hover:bg-gray-50">
+                            <span class="text-xl">−</span>
+                        </button>
+                        <input type="number" name="qty" x-model="quantity" min="1"
+                            class="w-20 h-12 text-center border-x focus:ring-0 focus:outline-none">
+                        <button type="button" @click.prevent="quantity = quantity + 1"
+                            class="flex items-center justify-center w-12 h-12 text-gray-600 transition-colors hover:bg-gray-50">
+                            <span class="text-xl">+</span>
+                        </button>
+                    </div>
+                </div>
+
+                {{-- Date & Comment --}}
+                <div class="space-y-6">
+                    <div class="space-y-3">
+                        <label class="text-sm font-medium text-gray-900">Date de retrait</label>
+                        <input type="date" name="orderDate" min="{{ date('Y-m-d') }}" value="{{ date('Y-m-d') }}"
+                            class="w-full h-12 px-4 border-gray-200 rounded-lg focus:border-blue-500">
+                    </div>
+
+                    <div class="space-y-3">
+                        <label class="text-sm font-medium text-gray-900">Instructions spéciales</label>
+                        <textarea name="comment" rows="3"
+                            class="w-full px-4 py-3 border-gray-200 rounded-lg focus:border-blue-500"
+                            placeholder="Ajouter des instructions particulières..."></textarea>
+                    </div>
                 </div>
             </div>
 
-            <!-- Order Date -->
-            <div class="mb-4">
-                <x-input-label name="orderDate" value="Date de commande" class="mb-1" />
-                <input type="date" name="orderDate" min="{{ date('Y-m-d') }}" value="{{ date('Y-m-d') }}"
-                    class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200">
-            </div>
+            {{-- Sticky Footer --}}
+            <div class="sticky bottom-0 p-6 space-y-4 bg-white border-t">
 
-            {{-- Comment --}}
-            <div class="mb-4">
-                <x-input-label name="comment" value="Commentaire" class="mb-1" />
-                <textarea name="comment"
-                    class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200"></textarea>
-            </div>
-
-            <!-- Buttons -->
-            <div class="flex justify-end mt-6 space-x-3">
-                <button type="button" onclick="closeModal('{{ $name }}')"
-                    class="px-4 py-2 text-gray-800 bg-gray-200 rounded-md hover:bg-gray-300">
-                    Annuler
-                </button>
-                <button type="submit" class="px-4 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600">
-                    Commander
-                </button>
+                <div class="grid grid-cols-2 gap-4">
+                    <button type="button" @click="show = false"
+                        class="w-full py-3.5 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
+                        Annuler
+                    </button>
+                    <button type="submit"
+                        class="w-full py-3.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors">
+                        Ajouter au panier
+                    </button>
+                </div>
             </div>
         </form>
     </div>
 </div>
-<script>
-    function incrementQuantity() {
-        const input = document.querySelector('input[name="qty"]');
-        input.value = parseInt(input.value) + 1;
-    }
-
-    function decrementQuantity() {
-        const input = document.querySelector('input[name="qty"]');
-        if (parseInt(input.value) > 1) {
-            input.value = parseInt(input.value) - 1;
-        }
-    }
-</script>
