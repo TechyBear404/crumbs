@@ -26,6 +26,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('/ingredients', IngredientController::class);
     Route::resource('users', UserController::class);
     Route::resource('orders', OrderController::class);
+    Route::put('/orders/bulk-update', [OrderController::class, 'bulkUpdate'])->name('orders.bulk-update');
 });
 
 Route::middleware(['auth'])->group(function () {

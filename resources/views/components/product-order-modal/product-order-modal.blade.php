@@ -39,8 +39,7 @@
     x-on:keydown.escape.window="show = false" x-on:keydown.tab.prevent="$event.shiftKey || nextFocusable().focus()"
     x-on:keydown.shift.tab.prevent="prevFocusable().focus()" x-show="show"
     class="fixed inset-0 z-50 px-4 py-6 overflow-y-auto sm:px-0" style="display: {{ $show ? 'block' : 'none' }};">
-    <div x-show="show"
-        class="fixed inset-0 transition-all transform" x-on:click="show = false"
+    <div x-show="show" class="fixed inset-0 transition-all transform" x-on:click="show = false"
         x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0"
         x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200"
         x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
@@ -49,8 +48,7 @@
 
     <div x-show="show"
         class="mb-6 bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:w-full {{ $maxWidth }} sm:mx-auto"
-        x-transition:enter="translate-x-0"
-        x-transition:enter-start="translate-x-full"
+        x-transition:enter="translate-x-0" x-transition:enter-start="translate-x-full"
         x-transition:leave-end="translate-x-full">
 
         {{-- Header --}}
@@ -69,15 +67,16 @@
             <div class="flex-1 p-6 space-y-8 overflow-y-auto">
                 {{-- Product Preview --}}
                 <div class="flex gap-6">
-                    @if($product->image)
+                    @if ($product->image)
                         <div class="relative flex-shrink-0 w-40 h-40">
                             <img src="{{ $product->image }}" alt="{{ $product->name }}"
                                 class="object-cover w-full h-full rounded-2xl">
                         </div>
                     @endif
                     <div class="space-y-2">
-                        @if($product->category)
-                            <span class="inline-flex px-2.5 py-1 text-xs font-medium text-blue-700 bg-blue-50 rounded-full">
+                        @if ($product->category)
+                            <span
+                                class="inline-flex px-2.5 py-1 text-xs font-medium text-blue-700 bg-blue-50 rounded-full">
                                 {{ $product->category->name }}
                             </span>
                         @endif
@@ -87,24 +86,24 @@
                 </div>
 
                 {{-- Size Selection --}}
-                    <div class="space-y-3">
-                        <label class="text-sm font-medium text-gray-900">Taille</label>
-                        <div class="grid grid-cols-3 gap-3" x-data="{ selectedVariant: '{{ $product->variations->first()->id }}' }">
-                            @foreach ($product->variations as $variation)
-                                <label class="relative">
-                                    <input type="radio" name="variantId" value="{{ $variation->id }}"
-                                        x-model="selectedVariant"
-                                        class="sr-only peer">
-                                    <div class="p-4 text-center transition-all border-2 cursor-pointer rounded-xl peer-checked:border-blue-500 peer-checked:bg-blue-50 hover:border-blue-200">
-                                        <span class="block text-sm font-medium">{{ $variation->name }}</span>
-                                        <span class="block mt-1 text-sm text-gray-500">
-                                            {{ $variation->prices->where('endDate', null)->first()->price }}€
-                                        </span>
-                                    </div>
-                                </label>
-                            @endforeach
-                        </div>
+                <div class="space-y-3">
+                    <label class="text-sm font-medium text-gray-900">Taille</label>
+                    <div class="grid grid-cols-3 gap-3" x-data="{ selectedVariant: '{{ $product->variations->first()->id }}' }">
+                        @foreach ($product->variations as $variation)
+                            <label class="relative">
+                                <input type="radio" name="variantId" value="{{ $variation->id }}"
+                                    x-model="selectedVariant" class="sr-only peer">
+                                <div
+                                    class="p-4 text-center transition-all border-2 cursor-pointer rounded-xl peer-checked:border-blue-500 peer-checked:bg-blue-50 hover:border-blue-200">
+                                    <span class="block text-sm font-medium">{{ $variation->name }}</span>
+                                    <span class="block mt-1 text-sm text-gray-500">
+                                        {{ $variation->prices->where('endDate', null)->first()->price }}€
+                                    </span>
+                                </div>
+                            </label>
+                        @endforeach
                     </div>
+                </div>
 
                 {{-- Quantity --}}
                 <div class="space-y-3">
@@ -133,8 +132,7 @@
 
                     <div class="space-y-3">
                         <label class="text-sm font-medium text-gray-900">Instructions spéciales</label>
-                        <textarea name="comment" rows="3"
-                            class="w-full px-4 py-3 border-gray-200 rounded-lg focus:border-blue-500"
+                        <textarea name="comment" rows="3" class="w-full px-4 py-3 border-gray-200 rounded-lg focus:border-blue-500"
                             placeholder="Ajouter des instructions particulières..."></textarea>
                     </div>
                 </div>

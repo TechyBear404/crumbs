@@ -1,0 +1,21 @@
+{
+    "plugins": ["@shufo/prettier-plugin-blade"],
+    "overrides": [
+        {
+            "files": ["*.blade.php"],
+            "options": {
+                "parser": "blade",
+                "printWidth": 80,
+                "tabWidth": 4,
+                "wrapAttributes": "auto",
+                "wrapAttributesMinAttrs": 2,
+                "sortTailwindcssClasses": true,
+                "sortHtmlAttributes": "none",
+                "noPhpSyntaxCheck": false,
+                "indentInnerHtml": true,
+                "extraLiners": "",
+                "trailingCommaPHP": true
+            }
+        }
+    ]
+}

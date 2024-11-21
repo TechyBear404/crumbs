@@ -46,9 +46,10 @@ class ProductController extends Controller
             ->where('userId', Auth::id())
             ->get();
         $categories = Category::orderBy('name')->get();
+        $ingredients = Ingredient::orderBy('name')->get();
         $products = $query->paginate(10);
         // $products = Product::paginate(10);
-        return view('product.index', compact('products', 'categories', 'orders'));
+        return view('product.index', compact('products', 'categories', 'orders', 'ingredients'));
     }
 
     /**

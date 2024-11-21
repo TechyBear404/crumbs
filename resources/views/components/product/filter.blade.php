@@ -2,16 +2,13 @@
 
 <div x-data="{ showFilter: false }" class="relative">
     <!-- Backdrop -->
-    <div class="fixed inset-0 z-40 transition-opacity bg-black bg-opacity-25 md:hidden"
-        x-show="showFilter"
-        @click="showFilter = false"
-        x-cloak></div>
+    <div class="fixed inset-0 z-40 transition-opacity bg-black bg-opacity-25 md:hidden" x-show="showFilter"
+        @click="showFilter = false" x-cloak></div>
 
     <!-- Filter Sidebar -->
     <div class="fixed inset-y-0 left-0 z-50 w-full max-w-xs overflow-hidden transition transform bg-white rounded-lg shadow-lg md:block md:static md:inset-y-auto md:left-auto md:w-72 md:transform-none md:transition-none"
-        :class="{'translate-x-0': showFilter, '-translate-x-full': !showFilter}"
-        @toggle-filter.window="showFilter = !showFilter"
-        @click.outside="showFilter = false">
+        :class="{ 'translate-x-0': showFilter, '-translate-x-full': !showFilter }"
+        @toggle-filter.window="showFilter = !showFilter" @click.outside="showFilter = false">
         <div class="h-full p-4 overflow-hidden bg-white sm:p-6">
             <div class="flex items-center justify-between mb-4 lg:block">
                 <h3 class="text-base font-semibold text-gray-700 sm:text-lg">Rechercher</h3>
