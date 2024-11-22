@@ -9,11 +9,6 @@ use Illuminate\Database\Seeder;
 
 class ProductSeeder extends Seeder
 {
-    private function convertPrice($price)
-    {
-        return (float) str_replace([',', ' €'], ['.', ''], $price);
-    }
-
     public function run(): void
     {
         // Create categories

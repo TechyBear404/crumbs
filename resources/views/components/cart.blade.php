@@ -146,10 +146,10 @@
                 <form action="{{ route('orders.bulk-update') }}" method="POST">
                     @csrf
                     @method('PUT')
-                    <template x-for="order in selectedOrders" :key="order.orderId">
+                    <template x-for="(order, index) in selectedOrders" :key="order.orderId">
                         <div>
-                            <input type="hidden" :name="'orders[][orderId]'" :value="order.orderId">
-                            <input type="hidden" :name="'orders[][statusId]'" :value="order.statusId">
+                            <input type="hidden" :name="'orders[' + index + '][orderId]'" :value="order.orderId">
+                            <input type="hidden" :name="'orders[' + index + '][statusId]'" :value="order.statusId">
                         </div>
                     </template>
                     <button type="submit" x-bind:disabled="selectedOrders.length === 0"

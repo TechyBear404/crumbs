@@ -34,7 +34,20 @@
                                                 <td class="px-6 py-4">{{ $order->user->name }}</td>
                                             @endif
                                             <td class="px-6 py-4">
-                                                <span
+                                                {{-- order can have multiple status --}}
+                                                @foreach ($order->statusHistory as $status)
+                                                    <span
+                                                        class="px-3 py-1 text-sm rounded-full
+                                                        @switch($status->name)
+                                                            @case('pending') bg-yellow-100 text-yellow-800 @break
+                                                            @case('completed') bg-green-100 text-green-800 @break
+                                                            @case('cancelled') bg-red-100 text-red-800 @break
+                                                            @default bg-gray-100 text-gray-800
+                                                        @endswitch">
+                                                        {{ $status->name }}
+                                                    </span>
+                                                @endforeach
+                                                {{-- <span
                                                     class="px-3 py-1 text-sm rounded-full
                                                 @switch($order->status)
                                                     @case('pending') bg-yellow-100 text-yellow-800 @break
@@ -42,10 +55,8 @@
                                                     @case('cancelled') bg-red-100 text-red-800 @break
                                                     @default bg-gray-100 text-gray-800
                                                 @endswitch">
-                                                    @foreach ($order->status as $status)
-                                                        {{ $status->name }}
-                                                    @endforeach
-                                                </span>
+                                                    {{ $order->status()->name }}
+                                                </span> --}}
                                             </td>
                                             <td class="px-6 py-4">
                                                 <div class="space-y-2">

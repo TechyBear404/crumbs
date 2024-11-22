@@ -166,6 +166,7 @@ class OrderController extends Controller
      */
     public function bulkUpdate(Request $request)
     {
+        // dd($request->all());
         $validatedData = $request->validate([
             'orders' => 'required|array',
             'orders.*.orderId' => 'required|integer',

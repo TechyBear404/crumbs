@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\OrderStatus;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class OrderStatusSeeder extends Seeder
@@ -13,15 +12,15 @@ class OrderStatusSeeder extends Seeder
      */
     public function run(): void
     {
-        $orderStatuses = [
+        $orderStatus = [
             ['name' => 'Pending'],
             ['name' => 'Delivered'],
             ['name' => 'Payed'],
             ['name' => 'Cancelled'],
         ];
 
-        foreach ($orderStatuses as $orderStatus) {
-            OrderStatus::create($orderStatus);
+        foreach ($orderStatus as $status) {
+            OrderStatus::create(['name' => $status['name']]);
         }
     }
 }
